@@ -1,0 +1,130 @@
+
+from os.path import sep
+import pyautogui, os
+from common_config import TEMP_IMGS,DATASET_IMGS
+import cv2
+from matplotlib import pyplot as plt
+import numpy as np
+from win32api import GetSystemMetrics
+
+
+
+def churrete_masivo():
+
+    taskbar_icon_to_fg = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
+    img_rgb = cv2.imread("{}{}".format(TEMP_IMGS,"screenshot.png"), cv2.IMREAD_GRAYSCALE)
+    template = cv2.imread(taskbar_icon_to_fg, cv2.IMREAD_GRAYSCALE)
+
+    w, h = template.shape[::-1]
+    '''
+    # All the 6 methods for comparison in a list
+    methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR',
+               'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
+    '''
+
+    res = cv2.matchTemplate(img_rgb, template, cv2.TM_CCOEFF_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+    # Specify a threshold
+    threshold = 0.8
+
+    # Store the coordinates of matched area in a numpy array
+    loc = np.where(res >= threshold)
+
+    # Draw a rectangle around the matched region.
+    for pt in zip(*loc[::-1]):
+        cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (128, 128, 128), 2)
+
+    # Show the final image with the matched area.
+    cv2.imshow('Detected', img_rgb)
+    cv2.waitKey()
+
+def refresh_screenshot():
+    im2 = pyautogui.screenshot("{}{}".format(TEMP_IMGS,"screenshot.png"))
+
+
+def test():
+
+    template  = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
+    haystack = cv2.imread("{}{}".format(TEMP_IMGS,"screenshot.png"), cv2.IMREAD_COLOR)
+    needle = cv2.imread(template, cv2.IMREAD_COLOR)
+
+    w, h , _= needle.shape
+
+    output = needle.copy()
+    cv2.namedWindow('output', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('output', 1024,800)
+    roi=needle[:, 50:]
+
+    cv2.imshow("output", roi)
+    #cv2.imshow("needle", needle)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+
+    return
+
+
+def testing_img_recongnition_pyautogui():
+    directory= ("{}{}".format(DATASET_IMGS,  "main_window"))
+    print ("directorio de busqueda: {}".format(directory))
+    for filename in os.listdir(directory):
+        if filename.endswith(".asm") or filename.endswith(".py"):
+            # print(os.path.join(directory, filename))
+            continue
+        else:
+            template = ("{}{}{}{}".format(DATASET_IMGS, "main_window", sep, filename))
+            print ("buscando template: {}".format(filename))
+            found= pyautogui.locateOnScreen(template)
+            if found:
+                left, top, width, height = pyautogui.locateOnScreen(template)
+                print ("left: {} , top: {}, width: {}, height: {}".format(left, top, width, height))
+            else:
+                print ("template: {} no encontrado".format(template))
+
+
+
+
+if __name__ == '__main__':
+    refresh_screenshot()
+    elemento=None
+    image_window = "Source Image"
+    result_window = "Result window"
+    directory= ("{}{}".format(DATASET_IMGS,  "main_window"))
+    print ("directorio de busqueda: {}".format(directory))
+    img_path =  ("{}{}".format(TEMP_IMGS,"screenshot.png"))
+
+    img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    img_display = img.copy()
+
+    for filename in os.listdir(directory):
+        if filename.endswith(".asm") or filename.endswith(".py"):
+            # print(os.path.join(directory, filename))
+            continue
+        else:
+            template = ("{}{}{}{}".format(DATASET_IMGS, "main_window", sep, filename))
+            print ("buscando template: {}".format(filename))
+            templ = cv2.imread(template, cv2.IMREAD_COLOR)
+            img_display = img.copy()
+
+            result = cv2.matchTemplate(img, templ, cv2.TM_CCORR_NORMED)
+            cv2.normalize(result, result, 0, 1, cv2.NORM_MINMAX, -1)
+            _minVal, _maxVal, minLoc, maxLoc = cv2.minMaxLoc(result, None)
+            matchLoc = maxLoc
+
+            cv2.namedWindow(image_window, cv2.WINDOW_AUTOSIZE)
+            cv2.namedWindow(result_window, cv2.WINDOW_AUTOSIZE)
+            cv2.rectangle(img_display, matchLoc, (matchLoc[0] + templ.shape[0], matchLoc[1] + templ.shape[1]), (0, 0, 0),
+                         2, 8, 0)
+            cv2.rectangle(result, matchLoc, (matchLoc[0] + templ.shape[0], matchLoc[1] + templ.shape[1]), (0, 0, 0), 2,
+                         8, 0)
+            cv2.imshow(image_window, img_display)
+            cv2.imshow(result_window, result)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+    #plt.switch_backend('agg')
+    #test()
+
+    #churrete_masivo()
