@@ -92,7 +92,7 @@ if __name__ == '__main__':
     img_display = img.copy()
 
     for filename in os.listdir(directory):
-        if  filename.endswith(".py"):
+        if filename.endswith(".py"):
             continue
         else:
             template = ("{}{}{}{}".format(DATASET_IMGS, "main_window", sep, filename))
@@ -120,9 +120,10 @@ if __name__ == '__main__':
 
             center = (int((matchLoc[0] + w / 2)), int((matchLoc[1] + templ.shape[0]) - h / 2))
             x_center = int(matchLoc[0] + w / 2)
-            y_center= int( (matchLoc[1] + templ.shape[0]) - h/2)
+            y_center = int((matchLoc[1] + templ.shape[0]) - h / 2)
+            pyautogui.dragTo(x_center, y_center, duration=3)
+            #pyautogui.click()
 
-            pyautogui.dragTo(x_center,y_center,  duration=3)
             '''
             beatiful visual testing purposes
             
