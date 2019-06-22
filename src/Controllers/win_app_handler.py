@@ -21,6 +21,9 @@ class WinAppHandler(object):
 
     def __init__(self, logger):
         self._logger = AppLogger.create_log() if not logger else logger
+        self.window_features()
+
+    def window_features(self):
         win32gui.EnumWindows(self.callback, None)
 
     def callback(self, hwnd, extra=None):
@@ -40,11 +43,22 @@ class WinAppHandler(object):
         self._width = rect[2] - self._location_x
         self._height = rect[3] - self._location_y
 
+    def daemon_dont_disturb_please(self):
+
+        while True:
+            try:
+                self.set_foreground(True)
+                # @todo, too much killer..too much Dexter
+                self._logger.info("daemon_dont_disturb_please, modo Killer")
+                sleep(3)
+            except Exception as e:
+                pass
+
     def set_foreground(self, kill_the_enemy=False):
 
         foreground_one = win32gui.GetForegroundWindow()
         if foreground_one != self._hwnd:
-            if kill_the_enemy:
+            if kill_the_enemy:  # @todo quizas una lista blanca de procesos
                 sleep(3)
                 win32gui.PostMessage(foreground_one, win32con.WM_CLOSE, 0, 0)
 
@@ -52,6 +66,7 @@ class WinAppHandler(object):
             self.maximize_window()
             win32gui.SetForegroundWindow(self._hwnd)
             win32gui.SetActiveWindow(self._hwnd)
+            self.window_features()  # refresh dims
 
     def maximize_window(self):
         win32gui.ShowWindow(self._hwnd, win32con.SW_MAXIMIZE)
