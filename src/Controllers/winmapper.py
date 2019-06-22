@@ -1,4 +1,4 @@
-from common_config import TEMP_IMGS, MAPED_WINDOWS
+from common_config import TEMP_IMGS, MAPPED_WINDOWS
 from settings.screen_schemes import windows
 import os
 from src.Models.Pantalla import Pantalla, Elemento
@@ -86,23 +86,23 @@ class WinMapper(object):
 
     def is_already_mapped(self):
         self.logger.info(
-            "is_already_mapped ? -> Checking former map {}{}{}, h x w: {}".format(MAPED_WINDOWS, os.path.sep,
+            "is_already_mapped ? -> Checking former map {}{}{}, h x w: {}".format(MAPPED_WINDOWS, os.path.sep,
                                                                                   self._current_window_name,
                                                                                   self._hwnd.get_h_w))
         return os.path.exists(
-            "{}{}{}{}".format(MAPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w))
+            "{}{}{}{}".format(MAPPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w))
 
     def load_or_create_mapping(self):
         if not self.is_already_mapped():
             self.map_window()
             self.save()
         else:
-            with open("{}{}{}{}".format(MAPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w)) as json_file:
+            with open("{}{}{}{}".format(MAPPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w)) as json_file:
                 self.pantalla = json.load(json_file)
 
     def save(self):
         #@todo, refresh de las dimensiones de la ventana
-        with open('{}{}{}{}'.format(MAPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w),
+        with open('{}{}{}{}'.format(MAPPED_WINDOWS, os.path.sep, self._current_window_name, self._hwnd.get_h_w),
                   'w') as outfile:
             outfile.write("{}".format(self.pantalla))
 
