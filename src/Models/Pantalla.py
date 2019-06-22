@@ -6,11 +6,13 @@ class Pantalla(object):
     _image_folder = None
     _elementos = {}
     _parent = None
+    _maping_file = None
 
     def __init__(self, **kw):
         self._nombre = kw.get('nombre')
         self._image_folder = kw.get('img_folder')
         self._elementos = kw.get('dict_elementos')
+        self._parent = kw.get('parent')
         self._parent = kw.get('parent')
 
     def add_element(self, element):
@@ -24,6 +26,8 @@ class Pantalla(object):
         if element_name and element_name in self.elementos.keys():
             return self.elementos[element_name]
 
+    def save(self):
+        pass
 
     # <editor-fold desc="Getters y Setters">
     @property
