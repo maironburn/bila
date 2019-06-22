@@ -1,5 +1,5 @@
 from . import Elemento
-
+import json
 
 class Pantalla(object):
     _nombre = ''
@@ -13,21 +13,22 @@ class Pantalla(object):
         self._image_folder = kw.get('img_folder')
         self._elementos = kw.get('dict_elementos')
         self._parent = kw.get('parent')
-        self._parent = kw.get('parent')
+
 
     def add_element(self, element):
-        if element:
+        if element :# and issubclass(element, Elemento):
             self.elementos.update({element.nombre: element})
 
     def has_element(self, element_name):
         return element_name in self.elementos.keys()
 
     def get_element_by_name(self, element_name):
-        if element_name and element_name in self.elementos.keys():
+        if self.has_element(element_name):
             return self.elementos[element_name]
 
-    def save(self):
-        pass
+    def __repr__(self):
+        return json.dumps(self, default=lambda x: x.__dict__,
+                          sort_keys=True, indent=4)
 
     # <editor-fold desc="Getters y Setters">
     @property

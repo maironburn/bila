@@ -5,7 +5,7 @@ from time import sleep
 from loggin.AppLogger import AppLogger
 
 '''
-class to handle app window and avoid intromisions
+class to handle app window, control running status, size and avoid intromisions
 '''
 
 
@@ -17,17 +17,19 @@ class WinAppHandler(object):
     _location_y = None
     _width = None
     _height = None
+    _logger = None
 
-    def __init__(self):
-        self.logger = AppLogger.create_log()
+    def __init__(self, logger):
+        self._logger = AppLogger.create_log() if not logger else logger
         win32gui.EnumWindows(self.callback, None)
 
-    def callback(self, hwnd, extra):
+    def callback(self, hwnd, extra=None):
         rect = win32gui.GetWindowRect(hwnd)
 
         if APP_NAME in win32gui.GetWindowText(hwnd):
             self.set_values(rect)
             self._hwnd = hwnd
+            self.log_screen_features()
 
     def set_values(self, rect):
 
@@ -42,21 +44,22 @@ class WinAppHandler(object):
 
         foreground_one = win32gui.GetForegroundWindow()
         if foreground_one != self._hwnd:
-            self.logger.info("checking foreground: {}".format("Hay un Usurpador, un vampiro digital"))
-            self.maximize_window()
-            win32gui.SetForegroundWindow(self._hwnd)
-            win32gui.SetActiveWindow(self._hwnd)
             if kill_the_enemy:
                 sleep(3)
                 win32gui.PostMessage(foreground_one, win32con.WM_CLOSE, 0, 0)
+
+            self._logger.info("checking foreground: {}".format("Hay un Usurpador, un vampiro digital"))
+            self.maximize_window()
+            win32gui.SetForegroundWindow(self._hwnd)
+            win32gui.SetActiveWindow(self._hwnd)
 
     def maximize_window(self):
         win32gui.ShowWindow(self._hwnd, win32con.SW_MAXIMIZE)
 
     def log_screen_features(self):
-        self.logger.info("Width ={}, Height ={}".format(self._screen_w, self._screen_h))
-        self.logger.info("Location = ({},{})".format(self._location_x, self._location_y))
-        self.logger.info("Size (h,w) = ({},{})".format(self._height, self._width))
+        self._logger.info("Screen Resolution Width ={}, Height ={}".format(self._screen_w, self._screen_h))
+        self._logger.info("Location = ({},{})".format(self._location_x, self._location_y))
+        self._logger.info("app window size (h,w) = ({},{})".format(self._height, self._width))
 
     @property
     def get_h_w(self):

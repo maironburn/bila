@@ -14,7 +14,6 @@ def getElementCoords(haystack, needle):
     _minVal, _maxVal, minLoc, maxLoc = cv2.minMaxLoc(result, None)
     matchLoc = maxLoc
     h, w, _ = templ.shape
-    print("h:{}, w:{}".format(h, w))
 
     center = (int((matchLoc[0] + w / 2)), int((matchLoc[1] + templ.shape[0]) - h / 2))
     x_center = int(matchLoc[0] + w / 2)
@@ -51,7 +50,7 @@ if __name__ == '__main__':
             _minVal, _maxVal, minLoc, maxLoc = cv2.minMaxLoc(result, None)
             matchLoc = maxLoc
             '''
-            beatiful visual testing purposes
+            beautiful visual testing purposes
 
             #cv2.namedWindow(image_window, cv2.WINDOW_AUTOSIZE)
             #font = cv2.FONT_HERSHEY_CLoc[0] + templ.shape[1] - 150, matchLoc[1] + templ.shape[0] - 30),
@@ -72,7 +71,7 @@ if __name__ == '__main__':
             # pyautogui.click()
 
             '''
-            beatiful visual testing purposes
+            beautiful visual testing purposes
 
             cv2.circle(img_display, center, 5, (0, 255, 0), -1)
             cv2.imshow(image_window, img_display)
