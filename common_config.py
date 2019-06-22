@@ -1,9 +1,13 @@
 import os.path
 
-APP_NAME = 'Plataforma de programas de ayuda'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-IMG_DIRS = os.path.join(ROOT_DIR, 'img')
 SETTINGS = os.path.join(ROOT_DIR, 'settings')
+
+APP_NAME = 'Plataforma de programas de ayuda'
+LOGGER_NAME = 'BilaLogger.log'
+LOG_FILE = "{}{}{}{}{}".format(ROOT_DIR, os.path.sep, 'loggin', os.path.sep, LOGGER_NAME)
+
+IMG_DIRS = os.path.join(ROOT_DIR, 'img')
 
 INPUT_FOLDER = "{}{}{}{}".format(IMG_DIRS, os.path.sep, "input_folder", os.path.sep)
 OUTPUT_FOLDER = "{}{}{}{}".format(IMG_DIRS, os.path.sep, "output_folder", os.path.sep)

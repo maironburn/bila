@@ -2,16 +2,19 @@ import win32gui, win32con
 from win32api import GetSystemMetrics
 from common_config import APP_NAME
 from time import sleep
-import  win32com.client
+from loggin.AppLogger import AppLogger
 
 class WinAppHandler(object):
     _hwnd = None
+    _screen_w = None
+    _screen_h = None
     _location_x = None
     _location_y = None
     _width = None
     _height = None
 
     def __init__(self):
+        self.logger = AppLogger.create_log()
         win32gui.EnumWindows(self.callback, None)
 
     def callback(self, hwnd, extra):
@@ -22,13 +25,17 @@ class WinAppHandler(object):
             self._hwnd = hwnd
 
     def set_values(self, rect):
+
+        self._screen_w = GetSystemMetrics(0)
+        self._screen_h = GetSystemMetrics(1)
         self._location_x = rect[0]
         self._location_y = rect[1]
         self._width = rect[2] - self._location_x
         self._height = rect[3] - self._location_y
+        self.logger.info("Width ={}, Height ={}".format(self._screen_w, self._screen_h))
+        self.logger.info("Location = ({},{})".format(self._location_x, self._location_y))
+        self.logger.info("Size (h,w) = ({},{})".format(self._height, self._width))
 
-        print("\tLocation: (%d, %d)" % (self._location_x, self._location_y))
-        print("\t    Size: (%d, %d)" % (self._width, self._height))
 
     def set_foreground(self, kill_the_enemy=False):
 
@@ -41,15 +48,12 @@ class WinAppHandler(object):
                 sleep(3)
                 win32gui.PostMessage(foreground_one, win32con.WM_CLOSE, 0, 0)
 
-
     def maximize_window(self):
         win32gui.ShowWindow(self._hwnd, win32con.SW_MAXIMIZE)
 
 
 if __name__ == '__main__':
-    print("Width =", GetSystemMetrics(0))
-    print("Height =", GetSystemMetrics(1))
+
 
     win_hwnd = WinAppHandler()
-    win_hwnd.set_foreground(True)
-
+    win_hwnd.set_foreground(False)
