@@ -1,5 +1,6 @@
 import os.path
 
+APP_NAME = 'Plataforma de programas de ayuda'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMG_DIRS = os.path.join(ROOT_DIR, 'img')
 SETTINGS = os.path.join(ROOT_DIR, 'settings')
