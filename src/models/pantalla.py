@@ -3,14 +3,14 @@ import json
 
 class Pantalla(object):
     _nombre = ''
-    _image_folder = None
+    _element_img_folder = None
     _elementos = {}
     _parent = None
     _maping_file = None
 
     def __init__(self, **kw):
         self._nombre = kw.get('nombre')
-        self._image_folder = kw.get('img_folder')
+        self._element_img_folder = kw.get('img_folder')
         self._elementos = kw.get('dict_elementos')
         self._parent = kw.get('parent')
 
@@ -42,12 +42,12 @@ class Pantalla(object):
 
     @property
     def image_folder(self):
-        return self._image_folder
+        return self._element_img_folder
 
     @image_folder.setter
     def image_folder(self, value):
         if value:
-            self._image_folder = value
+            self._element_img_folder = value
 
     @property
     def elementos(self):

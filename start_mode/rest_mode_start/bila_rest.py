@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from src.controllers.winmapper import WinMapper
+from src.controllers.win_mapper import WinMapper
 import json
 
 app = Flask(__name__)
@@ -13,8 +13,8 @@ def index():
 
 @app.route('/main', methods=['GET'])
 def main_window():
-    winmaper = WinMapper({'current': 'main_window'})
-    return json.dumps(winmaper.pantalla, sort_keys=True, indent=4)
+    win_maper = WinMapper({'current': 'main_window'})
+    return json.dumps(win_maper.pantalla, sort_keys=True, indent=4)
 
 
 api = Api(app)

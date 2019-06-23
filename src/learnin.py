@@ -64,14 +64,14 @@ def test():
 
 
 def testing_img_recongnition_pyautogui():
-    directory = ("{}{}".format(DATASET_IMGS, "windows.py"))
+    directory = ("{}{}".format(DATASET_IMGS, "windows_skels.py"))
     print("directorio de busqueda: {}".format(directory))
     for filename in os.listdir(directory):
         if filename.endswith(".asm") or filename.endswith(".py"):
             # print(os.path.join(directory, filename))
             continue
         else:
-            template = ("{}{}{}{}".format(DATASET_IMGS, "windows.py", sep, filename))
+            template = ("{}{}{}{}".format(DATASET_IMGS, "windows_skels.py", sep, filename))
             print("buscando template: {}".format(filename))
             found = pyautogui.locateOnScreen(template)
             if found:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
         if filename.endswith(".py"):
             continue
         else:
-            template = ("{}{}{}{}".format(DATASET_IMGS, "windows.py", sep, filename))
+            template = ("{}{}{}{}".format(DATASET_IMGS, "windows_skels.py", sep, filename))
             print("buscando template: {}".format(filename))
             templ = cv2.imread(template, cv2.IMREAD_COLOR)
             img_display = img.copy()

@@ -73,5 +73,5 @@ class AppServerSvc(win32serviceutil.ServiceFramework):
 
 
 if __name__ == '__main__':
-    AppServerSvc()
+    AppServerSvc() #@todo, to dig in
     win32serviceutil.HandleCommandLine(AppServerSvc)
