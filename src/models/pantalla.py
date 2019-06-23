@@ -1,4 +1,4 @@
-from . import Elemento
+from . import elemento
 import json
 
 class Pantalla(object):

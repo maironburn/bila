@@ -1,21 +1,22 @@
-from flask import Flask, url_for
+from flask import Flask
+from flask_restful import Api
+from src.controllers.winmapper import WinMapper
+import json
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
-    return 'jola, cobro + de 85€ , y tú?'
+    return 'jola'
 
-@app.route('/login')
-def login():
-    return 'login'
 
-@app.route('/user/<username>')
-def profile(username):
-    return '{}\'s profile'.format(username)
+@app.route('/main', methods=['GET'])
+def main_window():
+    winmaper = WinMapper({'current': 'main_window'})
+    return json.dumps(winmaper.pantalla, sort_keys=True, indent=4)
 
-with app.test_request_context():
-    print(url_for('index'))
-    print(url_for('login'))
-    print(url_for('login', next='/'))
-    print(url_for('profile', username='John Doe'))
+
+api = Api(app)
+if __name__ == '__main__':
+    app.run(debug=True)

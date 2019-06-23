@@ -1,10 +1,10 @@
 from common_config import TEMP_IMGS, MAPPED_WINDOWS
 from settings.screen_schemes import windows
 import os
-from src.Models.Pantalla import Pantalla, Elemento
-from src.Controllers.tesserator import getElementCoords
-from loggin.AppLogger import AppLogger
-from src.Controllers.win_app_handler import WinAppHandler
+from src.models.pantalla import Pantalla, elemento
+from src.controllers.tesserator import getElementCoords
+from loggin.app_logger import AppLogger
+from src.controllers.win_app_handler import WinAppHandler
 import threading
 import json
 from time import sleep
@@ -48,7 +48,7 @@ class WinMapper(object):
 
     def dinamic_instance_elements(self, element_type, init_values):
         try:
-            element_type = getattr(Elemento, element_type)
+            element_type = getattr(elemento, element_type)
             return element_type(init_values)
         except Exception as e:
             pass

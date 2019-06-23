@@ -2,8 +2,8 @@ import win32gui, win32con
 from win32api import GetSystemMetrics
 from common_config import APP_NAME
 from time import sleep
-from loggin.AppLogger import AppLogger
-
+from loggin.app_logger import AppLogger
+import win32com.client
 '''
 class to handle app window, control running status, size and avoid intromisions
 '''
@@ -56,17 +56,25 @@ class WinAppHandler(object):
 
     def set_foreground(self, kill_the_enemy=False):
 
-        foreground_one = win32gui.GetForegroundWindow()
-        if foreground_one != self._hwnd:
-            if kill_the_enemy:  # @todo quizas una lista blanca de procesos
-                sleep(3)
-                win32gui.PostMessage(foreground_one, win32con.WM_CLOSE, 0, 0)
+        try:
+            foreground_one = win32gui.GetForegroundWindow()
+            if foreground_one != self._hwnd:
+                if kill_the_enemy:  # @todo quizas una lista blanca de procesos
+                    sleep(3)
+                    win32gui.PostMessage(foreground_one, win32con.WM_CLOSE, 0, 0)
 
-            self._logger.info("checking foreground: {}".format("Hay un Usurpador, un vampiro digital"))
-            self.maximize_window()
-            win32gui.SetForegroundWindow(self._hwnd)
-            win32gui.SetActiveWindow(self._hwnd)
-            self.window_features()  # refresh dims
+                self._logger.info("checking foreground: {}".format("Hay un Usurpador, un vampiro digital"))
+                self.maximize_window()
+                shell = win32com.client.Dispatch("WScript.Shell")
+                shell.SendKeys('%')
+                win32gui.SetForegroundWindow(self._hwnd)
+                win32gui.SetActiveWindow(self._hwnd)
+                win32gui.SetFocus(self._hwnd)
+                self.window_features()  # refresh dims
+
+        except Exception as e:
+            self._logger.error("set_foreground exception -> ".format(e))
+            #print("sorry, need it, set_foreground exception -> ".format(e))
 
     def maximize_window(self):
         win32gui.ShowWindow(self._hwnd, win32con.SW_MAXIMIZE)
