@@ -2,6 +2,7 @@ import os.path
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SETTINGS = os.path.join(ROOT_DIR, 'settings')
+WORKFLOWS = os.path.join(ROOT_DIR, 'workflow_macros')
 
 APP_NAME = 'Plataforma de programas de ayuda'
 LOGGER_NAME = 'BilaLogger.log'

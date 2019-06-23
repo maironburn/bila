@@ -126,5 +126,5 @@ class WinMapper(object):
 
 
 if __name__ == '__main__':
-    winmaper = WinMapper({'current': 'main_window'})
+    winmaper = WinMapper({'current': 'main'})
     print ("inspect me")

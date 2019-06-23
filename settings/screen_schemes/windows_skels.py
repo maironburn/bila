@@ -1,7 +1,7 @@
 import os.path
 from common_config import TEMP_IMGS, DATASET_IMGS
 
-main_window = {
+main = {
     "nombre": "main",
     "parent": None,
     "img_folder": "{}{}".format(DATASET_IMGS, "main_window"),
