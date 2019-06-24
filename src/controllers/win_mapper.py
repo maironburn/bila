@@ -99,22 +99,19 @@ class WinMapper(object):
 
     def load_or_create_mapping(self):
         if not self.is_already_mapped():
-            ''' Se mapean los elementos x reconocimiento de imgs'''
+            '''Se mapean los elementos x reconocimiento de imgs'''
             self.map_window()
-            ''' serializamos y guardamos con el nombre la panta y su resolucion'''
+            '''serializamos y guardamos con el nombre la panta y su resolucion'''
             self.save()
         else:
-            ''' 
-                Construccion de la pantalla a partir de los elementos persistidos en el fichero json
-            '''
+            '''Construccion de la pantalla a partir de los elementos persistidos en el fichero json'''
             with open("{}{}{}{}".format(MAPPED_WINDOWS, separator, self._current_window_name,
                                         self._hwnd.get_h_w)) as json_file:
 
                 kw = json.load(json_file)
-                _elements = {}
                 json_element = kw.pop('_elements')
                 self.pantalla = Pantalla(**kw)
-
+                ''' deserializacion'''
                 for e in json_element.values():
                     self.pantalla.add_element(self.load_elements_from_json(e))
 
