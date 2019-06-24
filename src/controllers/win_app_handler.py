@@ -28,11 +28,12 @@ class WinAppHandler(object):
 
     def callback(self, hwnd, extra=None):
         rect = win32gui.GetWindowRect(hwnd)
+        if win32gui.IsWindowVisible(hwnd) and win32gui.GetWindowText(hwnd) != '':
 
-        if APP_NAME in win32gui.GetWindowText(hwnd):
-            self.set_values(rect)
-            self._hwnd = hwnd
-            self.log_screen_features()
+            if APP_NAME in win32gui.GetWindowText(hwnd):
+                self.set_values(rect)
+                self._hwnd = hwnd
+                self.log_screen_features()
 
     def set_values(self, rect):
 
