@@ -26,7 +26,7 @@ class WinMapper(object):
         if self._hwnd.handler:
             self._hwnd.set_foreground(False)
             self._current_window_name = kw.get('current')
-            # check was maped before ?
+            # check was mapped before ?
             sleep(1)
             self.load_or_create_mapping()
             '''
@@ -75,14 +75,13 @@ class WinMapper(object):
             for filename in [x for x in os.listdir(self.pantalla.image_folder) if
                              not x.startswith('_') and os.path.isfile(
                                  "{}{}{}".format(self.pantalla.image_folder, separator, x))]:
-
                 element_type = self.get_type_from_filename(filename)
                 element_name = self.get_element_name_from_filename(filename)
                 needle = "{}{}{}".format(self.pantalla.image_folder, separator, filename)
                 ''' call to tesseract controller'''
                 x, y = getElementCoords(haystack, needle)
                 self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
-                kw = {'nombre': element_name, 'image': needle, 'x': x, 'y': y}
+                kw = {'name': element_name, 'image': needle, 'x': x, 'y': y, '_parent': self.pantalla.name}
                 '''building windows'''
                 elm_instace = self.dinamic_instance_elements(element_type, kw)
                 self.pantalla.add_element(elm_instace)
@@ -100,18 +99,32 @@ class WinMapper(object):
 
     def load_or_create_mapping(self):
         if not self.is_already_mapped():
+            '''Se mapean los elementos x reconocimiento de imgs'''
             self.map_window()
+            '''serializamos y guardamos con el nombre la panta y su resolucion'''
             self.save()
         else:
+            '''Construccion de la pantalla a partir de los elementos persistidos en el fichero json'''
             with open("{}{}{}{}".format(MAPPED_WINDOWS, separator, self._current_window_name,
                                         self._hwnd.get_h_w)) as json_file:
-                self.pantalla = json.load(json_file)
+
+                kw = json.load(json_file)
+                json_element = kw.pop('_elements')
+                self.pantalla = Pantalla(**kw)
+                ''' deserializacion'''
+                for e in json_element.values():
+                    self.pantalla.add_element(self.load_elements_from_json(e))
 
     def save(self):
         # @todo, refresh de las dimensiones de la ventana
         with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, self._current_window_name, self._hwnd.get_h_w),
                   'w') as outfile:
             outfile.write("{}".format(self.pantalla))
+
+    def load_elements_from_json(self, element_dict):
+
+        element_type = self.get_type_from_filename(element_dict.get('_image').split('\\')[-1])
+        return self.dinamic_instance_elements(element_type, element_dict)
 
     # <editor-fold desc="Getter / Setter">
     @property
@@ -127,4 +140,12 @@ class WinMapper(object):
 
 if __name__ == '__main__':
     winmaper = WinMapper({'current': 'main'})
-    print ("inspect me")
+    pantalla = winmaper.pantalla
+    elmt = pantalla.get_element_by_name('copia_seguridad')
+    # print("x: {}, y: {}".format(elmt.x, elmt.y))
+
+    # obtencion de todos los elementos
+    for k, v in pantalla.elements.items():
+        print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
+
+    # print("inspect me")

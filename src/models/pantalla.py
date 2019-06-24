@@ -1,30 +1,30 @@
 from . import elemento
 import json
 
+
 class Pantalla(object):
-    _nombre = ''
+    _name = ''
     _element_img_folder = None
-    _elementos = {}
+    _elements = {}
     _parent = None
-    _maping_file = None
+    _mapping_file = None
 
     def __init__(self, **kw):
-        self._nombre = kw.get('nombre')
-        self._element_img_folder = kw.get('img_folder')
-        self._elementos = kw.get('dict_elementos')
-        self._parent = kw.get('parent')
-
+        self._name = kw.get('_name')
+        self._element_img_folder = kw.get('_img_folder')
+        self._elements = kw.get('_dict_elements', {})
+        self._parent = kw.get('_parent')
 
     def add_element(self, element):
-        if element :# and issubclass(element, Elemento):
-            self.elementos.update({element.nombre: element})
+        if element:  # and issubclass(element, Elemento):
+            self.elements.update({element.name: element})
 
     def has_element(self, element_name):
-        return element_name in self.elementos.keys()
+        return element_name in self.elements.keys()
 
     def get_element_by_name(self, element_name):
         if self.has_element(element_name):
-            return self.elementos[element_name]
+            return self.elements[element_name]
 
     def __repr__(self):
         return json.dumps(self, default=lambda x: x.__dict__,
@@ -32,13 +32,13 @@ class Pantalla(object):
 
     # <editor-fold desc="Getters y Setters">
     @property
-    def nombre(self):
-        return self._nombre
+    def name(self):
+        return self._name
 
-    @nombre.setter
-    def nombre(self, value):
+    @name.setter
+    def name(self, value):
         if value:
-            self._nombre = value
+            self._name = value
 
     @property
     def image_folder(self):
@@ -50,13 +50,13 @@ class Pantalla(object):
             self._element_img_folder = value
 
     @property
-    def elementos(self):
-        return self._elementos
+    def elements(self):
+        return self._elements
 
-    @elementos.setter
-    def elementos(self, value):
+    @elements.setter
+    def elements(self, value):
         if value:
-            self._elementos = value
+            self._elements = value
 
     @property
     def parent(self):

@@ -1,6 +1,6 @@
-class Elemento(object):
+class Element(object):
 
-    _nombre = ''
+    _name = ''
     _image = ''
     _parent = None
     _x = 0.0
@@ -8,22 +8,22 @@ class Elemento(object):
 
     def __init__(self, kw):
 
-        self._nombre = kw.get('nombre')
-        self._image = kw.get('image')
-        self._parent = kw.get('parent')
-        self._x = kw.get('x')
-        self._y = kw.get('y')
+        self._name = kw.get('_name')
+        self._image = kw.get('_image')
+        self._parent = kw.get('_parent')
+        self._x = kw.get('_x')
+        self._y = kw.get('_y')
 
     # <editor-fold desc="Getter y Setters">
 
     @property
-    def nombre(self):
-        return self._nombre
+    def name(self):
+        return self._name
 
-    @nombre.setter
-    def nombre(self, value):
+    @name.setter
+    def name(self, value):
         if value:
-            self._nombre = value
+            self._name = value
 
     @property
     def x(self):
@@ -65,14 +65,14 @@ class Elemento(object):
     # </editor-fold>
 
 
-class Boton(Elemento):
+class Boton(Element):
 
     def __init__(self,kw):
         super().__init__(kw)
         #self._child_screen = kw.get('child_screen')
 
 
-class Tab(Elemento):
+class Tab(Element):
 
     def __init__(self, **kw):
         super().__init__(kw)
