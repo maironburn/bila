@@ -74,6 +74,12 @@ class Boton(Element):
 
 class Tab(Element):
 
-    def __init__(self, **kw):
+    def __init__(self, kw):
+        super().__init__(kw)
+        #self._child_screen = kw.get('child_screen')
+
+class Text(Element):
+
+    def __init__(self, kw):
         super().__init__(kw)
         #self._child_screen = kw.get('child_screen')

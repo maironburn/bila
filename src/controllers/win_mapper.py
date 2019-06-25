@@ -9,6 +9,7 @@ from src.controllers.win_app_handler import WinAppHandler
 import threading
 import json
 from time import sleep
+import pyautogui
 
 '''class for window's elements mapping'''
 
@@ -67,9 +68,14 @@ class WinMapper(object):
     def dump_config_window(self):
         pass
 
+    def capture_screen(self):
+        pyautogui.screenshot("{}{}".format(TEMP_IMGS, "screenshot.png"))
+
     def load_elements(self):
 
+        self.capture_screen()
         if os.path.exists(self.pantalla.image_folder):
+
             haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
             '''iterate over elements with non _ startswhith '''
             for filename in [x for x in os.listdir(self.pantalla.image_folder) if
@@ -81,7 +87,7 @@ class WinMapper(object):
                 ''' call to tesseract controller'''
                 x, y = getElementCoords(haystack, needle)
                 self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
-                kw = {'name': element_name, 'image': needle, 'x': x, 'y': y, '_parent': self.pantalla.name}
+                kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': self._current_window_name}
                 '''building windows'''
                 elm_instace = self.dinamic_instance_elements(element_type, kw)
                 self.pantalla.add_element(elm_instace)
@@ -139,9 +145,9 @@ class WinMapper(object):
 
 
 if __name__ == '__main__':
-    winmaper = WinMapper({'current': 'main'})
+    winmaper = WinMapper({'current': 'declarantes'})
     pantalla = winmaper.pantalla
-    elmt = pantalla.get_element_by_name('copia_seguridad')
+    elmt = pantalla.get_element_by_name('back')
     # print("x: {}, y: {}".format(elmt.x, elmt.y))
 
     # obtencion de todos los elementos
