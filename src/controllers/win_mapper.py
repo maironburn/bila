@@ -10,7 +10,8 @@ import threading
 import json
 from time import sleep
 import pyautogui
-
+import pandas as pd
+from common_config import APP_NAME
 '''class for window's elements mapping'''
 
 
@@ -22,22 +23,27 @@ class WinMapper(object):
 
     def __init__(self, kw):
         self.logger = AppLogger.create_log() if not self.logger else kw.get('logger')
-        self._hwnd = WinAppHandler(self.logger)
+        self._current_window_name = kw.get('current')
+        if self._current_window_name:
+            '''se instancia el controlador do not disturb'''
+            self._hwnd = WinAppHandler(self.logger)
+            if self._hwnd.handler:
+                '''@todo lanzo hilo de ejecucion'''
+                '''
+                daemon = threading.Thread(target=self._hwnd.daemon_dont_disturb_please)
+                daemon.start()
+                '''
+                self._hwnd.set_foreground(False) # esto no debe estar aqui sino dentro target thread
+                # check was mapped before ?
+                sleep(1)
+                self.load_or_create_mapping()
 
-        if self._hwnd.handler:
-            self._hwnd.set_foreground(False)
-            self._current_window_name = kw.get('current')
-            # check was mapped before ?
-            sleep(1)
-            self.load_or_create_mapping()
-            '''
-            daemon = threading.Thread(target=self._hwnd.daemon_dont_disturb_please)
-            daemon.start()
-            '''
         else:
-            self.logger.info("Bila is not Running")
+            self.logger.error("{} is not Running".format(APP_NAME))
             # instanciar...jay q descompilar class @todo
 
+    #mapper aux
+    # in param: curwindows_name
     def map_window(self):
 
         window = getattr(windows_skels, self._current_window_name)
