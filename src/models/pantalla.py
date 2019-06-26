@@ -1,5 +1,6 @@
-from . import elemento
 import json
+from os.path import sep as separator
+from common_config import MAPPED_WINDOWS
 
 
 class Pantalla(object):
@@ -25,6 +26,14 @@ class Pantalla(object):
     def get_element_by_name(self, element_name):
         if self.has_element(element_name):
             return self.elements[element_name]
+
+
+    def save_to_file(self,window_name, resolution):
+        # @todo, refresh de las dimensiones de la ventana
+        with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, window_name, resolution),
+                  'w') as outfile:
+            outfile.write("{}".format(self.__repr__()))
+
 
     def __repr__(self):
         return json.dumps(self, default=lambda x: x.__dict__,

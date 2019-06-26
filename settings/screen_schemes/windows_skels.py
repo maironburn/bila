@@ -14,22 +14,22 @@ main = {
 
 declarantes = {
     "_name": "declarantes",
-    "_parent": main,
+    "_parent": "main",
     "_img_folder": "{}{}{}".format(main['_img_folder'], os.path.sep, "declarantes"),
     "_dict_elements": {'busqueda_nombre_rz': '', 'quitar_filtro': '',
                        # ...
                        'nuevo_declarante': '',
-                       'back': ''}
+                       'salir': ''}
 }
 
 nuevo_declarante = {
     "_name": "nuevo_declarante",
-    "_parent": declarantes,
+    "_parent": "declarantes",
     "_img_folder": "{}{}{}".format(declarantes['_img_folder'], os.path.sep, 'nuevo_declarante'),
     "_dict_elements": {'nif': '', 'nombre_rz': '',
                        # ...
                        'apellido1': '',
                        'apellido2': '',
                        'aceptar': '',
-                       'back': ''}
+                       'salir': ''}
 }

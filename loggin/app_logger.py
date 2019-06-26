@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from common_config import LOGGER_NAME, LOG_FILE
+from common_config import LOGGER_NAME, LOG_FILE, SAVE_MAPPING
 from os.path import exists
 
 

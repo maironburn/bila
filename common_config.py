@@ -1,5 +1,20 @@
 import os.path
 
+# RUN Settings
+'''...........
+Thread Stuff
+..............
+'''
+FOREGROUND_THREAD = False
+TIME_SLEEP = 10
+TIME_WAIT_AFTER_KILLING = 10
+KILL_THE_ENEMY = False
+
+'''
+Doc parser Stuff
+'''
+SAVE_MAPPING = False
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SETTINGS = os.path.join(ROOT_DIR, 'settings')
 WORKFLOWS = os.path.join(ROOT_DIR, 'workflow_macros')
