@@ -34,6 +34,10 @@ class Pantalla(object):
             outfile.write("{}".format(self.__repr__()))
 
     def get_doc_parser_repr(self):
+        '''
+            devuelve las coordenadas x,y de cada Elemnto de la lista de elementos
+            para que el automatismo realice las acciones oportunas
+        '''
 
         doc_parser_repr = {}
         for k, v in self.elements.items():

@@ -10,15 +10,16 @@ import threading
 import json
 from src.controllers.doc_parser import Doc_Parser
 from common_config import APP_NAME
-from src.helpers.screen_resolution import screen_resolution
+from src.helpers.screen import screen_resolution, capture_screen
 from src.helpers.common import dinamic_instance_elements, get_type_from_filename, \
     get_element_name_from_filename
 
+from src.controllers.automation import insert_declarante
 '''
 import for testing
 '''
 
-from src.controllers.workflow_translator import get_wf_parsed_data
+#from src.controllers.workflow_translator import get_wf_parsed_data
 '''class for window's elements mapping'''
 
 
@@ -44,7 +45,7 @@ class WinMapper(object):
 
     # mapper aux
     # in param: curwindows_name
-    def map_window(self):
+    def map_window_ori(self):
 
         window = getattr(windows_skels, self._current_window_name)
         if windows_skels:
@@ -52,9 +53,21 @@ class WinMapper(object):
             self.load_elements()
             return self.pantalla
 
+    def map_window(self):
+
+
+        window = getattr(windows_skels, self._current_window_name)
+        if windows_skels:
+            self.pantalla = Pantalla(**window)
+
+            while self.pantalla.parent:
+                self.load_elements()
+                return self.pantalla
+
+
     def load_elements(self):
 
-        # capture_screen() #''' debug purposes '''
+        capture_screen() #''' debug purposes '''
         if os.path.exists(self.pantalla.image_folder):
 
             haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
@@ -75,6 +88,7 @@ class WinMapper(object):
                 elm_instace = dinamic_instance_elements(element_type, kw)
                 elm_instace and self.pantalla.add_element(elm_instace) or self.logger.error(
                     "elm_instace: {} Nulo".format(element_name))
+
 
             self.logger.info("{}".format(self.pantalla))
 
@@ -142,6 +156,8 @@ if __name__ == '__main__':
 
     kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}
     doc_parser = Doc_Parser(**kw)
-    get_wf_parsed_data(doc_parser.df)
-
+    wf_parsed_data= doc_parser.get_wf_parsed_data()
+    btn_aceptar= pantalla.get_element_by_name('aceptar')
+    commit =btn_aceptar.x, btn_aceptar.y
+    insert_declarante(wf_parsed_data,commit )
     # print("inspect me")

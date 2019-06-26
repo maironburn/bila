@@ -1,36 +1,23 @@
 from src.models import elemento
-from common_config import TEMP_IMGS
-import pyautogui
-
-'''
-extract name until first _ cause it defines class type
-'''
 
 
 def get_type_from_filename(filename):
+    '''extract name until first _ cause it defines class type'''
     return filename.split('_')[0].capitalize()
 
 
-'''element name without extension neither type'''
-
-
 def get_element_name_from_filename(filename):
+    '''element name without extension neither type'''
     return filename[0:filename.index('.')][filename.index('_') + 1:]
 
 
-'''instantiating attending to element_type (inferred by the filename first _  )'''
-
-
 def dinamic_instance_elements(element_type, init_values):
+    '''instantiating attending to element_type (inferred by the filename first _  )'''
     try:
-         # getattr(module, class_name)
+        # getattr(module, class_name)
         element_type = getattr(elemento, element_type)
         return element_type(init_values)
 
     except Exception as e:
         pass
     return None
-
-def capture_screen(name="screenshot.png"):
-    pyautogui.screenshot("{}{}".format(TEMP_IMGS, name))
-
