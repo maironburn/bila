@@ -27,13 +27,20 @@ class Pantalla(object):
         if self.has_element(element_name):
             return self.elements[element_name]
 
-
-    def save_to_file(self,window_name, resolution):
+    def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana
         with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, window_name, resolution),
                   'w') as outfile:
             outfile.write("{}".format(self.__repr__()))
 
+    def get_doc_parser_repr(self):
+
+        doc_parser_repr = {}
+        for k, v in self.elements.items():
+            if v:
+                doc_parser_repr.update({k: '{},{}'.format(v.x, v.y)})
+
+        return doc_parser_repr
 
     def __repr__(self):
         return json.dumps(self, default=lambda x: x.__dict__,

@@ -11,7 +11,7 @@ from win32api import GetSystemMetrics
 
 def churrete_masivo():
     taskbar_icon_to_fg = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
-    img_rgb = cv2.imread("{}{}".format(TEMP_IMGS, "screenshot.png"), cv2.IMREAD_GRAYSCALE)
+    img_rgb = cv2.imread("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"), cv2.IMREAD_GRAYSCALE)
     template = cv2.imread(taskbar_icon_to_fg, cv2.IMREAD_GRAYSCALE)
 
     w, h = template.shape[::-1]
@@ -40,12 +40,12 @@ def churrete_masivo():
 
 
 def refresh_screenshot():
-    im2 = pyautogui.screenshot("{}{}".format(TEMP_IMGS, "screenshot.png"))
+    im2 = pyautogui.screenshot("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"))
 
 
 def test():
     template = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
-    haystack = cv2.imread("{}{}".format(TEMP_IMGS, "screenshot.png"), cv2.IMREAD_COLOR)
+    haystack = cv2.imread("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"), cv2.IMREAD_COLOR)
     needle = cv2.imread(template, cv2.IMREAD_COLOR)
 
     w, h, _ = needle.shape
@@ -88,7 +88,7 @@ def which_window_am_i():
 def text_recognition():
 
     try:
-        image_file=  ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+        image_file=  ("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"))
         img = cv2.imread(image_file)
         d = pytesseract.image_to_data(img, output_type=Output.DICT)
         n_boxes = len(d['level'])
@@ -107,7 +107,7 @@ def text_recognition():
 def text_recognition2():
     try:
 
-        image_file = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+        image_file = ("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"))
         img = cv2.imread(image_file)
         h, w, _ = img.shape  # assumes color image
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     result_window = "Result window"
     directory = ("{}{}".format(DATASET_IMGS,start_window))
     print("directorio de busqueda: {}".format(directory))
-    img_path = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+    img_path = ("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"))
 
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     img_display = img.copy()

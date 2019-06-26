@@ -33,7 +33,7 @@ if __name__ == '__main__':
     result_window = "Result window"
     directory = ("{}{}".format(DATASET_IMGS, 'main_window'))
     print("directorio de busqueda: {}".format(directory))
-    img_path = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+    img_path = ("{}{}".format(TEMP_IMGS, "declarantes_screenshot.png"))
 
     img = cv2.imread(img_path, cv2.IMREAD_COLOR)
     img_display = img.copy()

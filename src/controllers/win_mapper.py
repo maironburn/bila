@@ -1,4 +1,4 @@
-from common_config import TEMP_IMGS, MAPPED_WINDOWS, FOREGROUND_THREAD
+from common_config import TEMP_IMGS, MAPPED_WINDOWS, FOREGROUND_THREAD, SAVE_MAPPING
 from settings.screen_schemes import windows_skels
 import os
 from os.path import sep as separator
@@ -9,12 +9,16 @@ from src.controllers.win_app_handler import WinAppHandler
 import threading
 import json
 from src.controllers.doc_parser import Doc_Parser
-
 from common_config import APP_NAME
 from src.helpers.screen_resolution import screen_resolution
 from src.helpers.common import dinamic_instance_elements, get_type_from_filename, \
-    get_element_name_from_filename, capture_screen
+    get_element_name_from_filename
 
+'''
+import for testing
+'''
+
+from src.controllers.workflow_translator import get_wf_parsed_data
 '''class for window's elements mapping'''
 
 
@@ -50,7 +54,7 @@ class WinMapper(object):
 
     def load_elements(self):
 
-        # capture_screen() ''' debug purposes '''
+        # capture_screen() #''' debug purposes '''
         if os.path.exists(self.pantalla.image_folder):
 
             haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
@@ -127,7 +131,7 @@ class WinMapper(object):
 
 
 if __name__ == '__main__':
-    winmaper = WinMapper({'current': 'declarantes'})
+    winmaper = WinMapper({'current': 'nuevo_declarante'})
     pantalla = winmaper.pantalla
     '''
     elmt = pantalla.get_element_by_name('back')
@@ -136,6 +140,8 @@ if __name__ == '__main__':
         print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
     '''
 
-    kw={'doc_src': 'macro_nueva_decarante.xls'}
-    doc_parser = Doc_Parser (**kw)
+    kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}
+    doc_parser = Doc_Parser(**kw)
+    get_wf_parsed_data(doc_parser.df)
+
     # print("inspect me")

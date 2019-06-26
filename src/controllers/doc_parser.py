@@ -1,33 +1,46 @@
 import pandas as pd
-import numpy
 from common_config import WORKFLOWS
 from os import path, sep
 
 
 class Doc_Parser(object):
-
     _doc = None
-    _reader = None
-    _dataframe = None
-
-    dict_reader = {'xls': pd.read_excel,
-                   'csv': pd.read_csv}
+    _df = pd.DataFrame
+    _mapping = None
 
     def __init__(self, **kw):
 
         self.doc = "{}{}{}".format(WORKFLOWS, sep, kw.get('doc_src'))
-        if path.exists(self.doc):
-            args = kw.get('args')
-            self._reader = self.dict_reader[self.get_type()]
+        ''' parametros adicionales del documento , delimitadores, indices '''
+        args = kw.get('args', None)
+
+        if path.exists(self.doc) and args:
             self.load_document(args)
 
-    # parametros adicionales del documento , delimitadores, indices
-    def load_document(self, args=None):
+    def load_document_remap_columns(self, args={}):
 
-        self.dataframe = self._reader(self.doc)
-        print("")
+        ''' carga el documento y remapea las columnas por sus coordenadas de posicion
 
-    def map_columns():
+            halla la correspondencia nombre de la columna -> elemento de ref en la app
+            y resetea los nombres de las columnas por sus coordnadas cartesianas
+        '''
+        try:
+            # self.df = self._reader(self.doc)
+            self._df = pd.read_excel(self.doc)
+            new_index = []
+            for c in self._df.columns:
+                if c and len(c) and c in args.keys():
+                    new_index.append(args[c])
+
+            if self._df.shape[1] == len(new_index):
+                self._df.columns = new_index
+            print("")
+
+        except Exception as e:
+            print("{}".format(e))
+
+    def map_columns(self):
+        ''' read columns header and overwrite then for x,y of corresponding element '''
         pass
 
     def get_type(self):
@@ -45,20 +58,21 @@ class Doc_Parser(object):
             self._doc = value
 
     @property
-    def reader(self):
-        return self._reader
+    def df(self):
+        return self._df
 
-    @reader.setter
-    def reader(self, value):
+    @df.setter
+    def df(self, value):
         if value:
-            self._reader = value
+            self._df = value
 
     @property
-    def dataframe(self):
-        return self._dataframe
+    def mapping(self):
+        return self._mapping
 
-    @dataframe.setter
-    def dataframe(self, value):
+    @mapping.setter
+    def mapping(self, value):
         if value:
-            self._dataframe = value
+            self._mapping = value
+
     # </editor-fold>

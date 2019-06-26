@@ -12,7 +12,7 @@ from win32api import GetSystemMetrics
 def churrete_masivo():
 
     taskbar_icon_to_fg = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
-    img_rgb = cv2.imread("{}{}".format(TEMP_IMGS,"screenshot.png"), cv2.IMREAD_GRAYSCALE)
+    img_rgb = cv2.imread("{}{}".format(TEMP_IMGS,"declarantes_screenshot.png"), cv2.IMREAD_GRAYSCALE)
     template = cv2.imread(taskbar_icon_to_fg, cv2.IMREAD_GRAYSCALE)
 
     w, h = template.shape[::-1]
@@ -40,13 +40,13 @@ def churrete_masivo():
     cv2.waitKey()
 
 def refresh_screenshot():
-    im2 = pyautogui.screenshot("{}{}".format(TEMP_IMGS,"screenshot.png"))
+    im2 = pyautogui.screenshot("{}{}".format(TEMP_IMGS,"declarantes_screenshot.png"))
 
 
 def singleton_matching():
 
     template  = ("{}{}".format(DATASET_IMGS, "tool_bar_icon.jpg"))
-    haystack = cv2.imread("{}{}".format(TEMP_IMGS,"screenshot.png"), cv2.IMREAD_GRAYSCALE)
+    haystack = cv2.imread("{}{}".format(TEMP_IMGS,"declarantes_screenshot.png"), cv2.IMREAD_GRAYSCALE)
     needle = cv2.imread(template, cv2.IMREAD_GRAYSCALE)
 
     w, h = needle.shape

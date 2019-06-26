@@ -31,6 +31,6 @@ def dinamic_instance_elements(element_type, init_values):
         pass
     return None
 
-def capture_screen():
-    pyautogui.screenshot("{}{}".format(TEMP_IMGS, "screenshot.png"))
+def capture_screen(name="screenshot.png"):
+    pyautogui.screenshot("{}{}".format(TEMP_IMGS, name))
 

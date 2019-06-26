@@ -26,7 +26,7 @@ nuevo_declarante = {
     "_name": "nuevo_declarante",
     "_parent": "declarantes",
     "_img_folder": "{}{}{}".format(declarantes['_img_folder'], os.path.sep, 'nuevo_declarante'),
-    "_dict_elements": {'nif': '', 'nombre_rz': '',
+    "_dict_elements": {'nif': '', 'nombre_rs': '',
                        # ...
                        'apellido1': '',
                        'apellido2': '',
