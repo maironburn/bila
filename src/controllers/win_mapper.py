@@ -48,7 +48,7 @@ class WinMapper(object):
 
     def get_ancestors_map(self, instance=None):
         ''' recursion ascendente para mapear las pantallas padres'''
-        while instance.parent != None:
+        while instance.parent:
             pantalla = load_json_skel(instance.parent)
             load_elements(pantalla)
             instance.parent = pantalla
@@ -89,7 +89,8 @@ class WinMapper(object):
         except Exception as e:
             self.logger.error("Exception in {} load_or_create_mapping -> {}".format(self.__class__.__name__, e))
 
-    def load_elements_from_json(self, element_dict):
+    @staticmethod
+    def load_elements_from_json(element_dict):
 
         element_type = get_type_from_filename(element_dict.get('_image').split('\\')[-1])
         return dinamic_instance_elements(element_type, element_dict)

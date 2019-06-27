@@ -17,7 +17,7 @@ class Doc_Parser(object):
         if path.exists(self.doc) and args:
             self.read_document_remap_columns(args)
 
-    def read_document_remap_columns(self, args={}):
+    def read_document_remap_columns(self, args):
 
         ''' brief:
             carga el documento y remapea las columnas por sus coordenadas de posicion
