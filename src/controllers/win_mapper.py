@@ -13,13 +13,16 @@ from common_config import APP_NAME
 from src.helpers.screen import screen_resolution, capture_screen
 from src.helpers.common import dinamic_instance_elements, get_type_from_filename, \
     get_element_name_from_filename
+import pyautogui
+from time import sleep
 
-from src.controllers.automation import insert_declarante
+# from src.controllers.automation import insert_declarante
+
 '''
 import for testing
 '''
 
-#from src.controllers.workflow_translator import get_wf_parsed_data
+# from src.controllers.workflow_translator import get_wf_parsed_data
 '''class for window's elements mapping'''
 
 
@@ -33,6 +36,9 @@ class WinMapper(object):
         self.logger = AppLogger.create_log() if not self.logger else kw.get('logger')
         self._current_window_name = kw.get('current')
         if self._current_window_name:
+            self.pantalla = self.load_json_skel(self._current_window_name)
+            self.load_elements(self.pantalla)
+
             '''se instancia el controlador do not disturb'''
             if FOREGROUND_THREAD:
                 self._win_app_handler = WinAppHandler(self.logger)
@@ -43,54 +49,58 @@ class WinMapper(object):
 
             self.load_or_create_mapping()
 
-    # mapper aux
-    # in param: curwindows_name
-    def map_window_ori(self):
+    def load_json_skel(self, pantalla_name):
 
-        window = getattr(windows_skels, self._current_window_name)
+        window = getattr(windows_skels, pantalla_name)
         if windows_skels:
-            self.pantalla = Pantalla(**window)
-            self.load_elements()
-            return self.pantalla
+            return Pantalla(**window)
 
-    def map_window(self):
+        return None
 
+    def get_ancestors_map(self, instance=None):
 
-        window = getattr(windows_skels, self._current_window_name)
-        if windows_skels:
-            self.pantalla = Pantalla(**window)
+        while instance.parent != None:
+            pantalla = self.load_json_skel(instance.parent)
+            self.load_elements(pantalla)
 
-            while self.pantalla.parent:
-                self.load_elements()
-                return self.pantalla
+            instance.parent = pantalla
 
+            return self.get_ancestors(instance.parent)
 
-    def load_elements(self):
+    def load_elements(self, pantalla):
+        ''' Carga los elemnetos integrantes de la pantalla'''
+        #haystack = "{}.png".format(pantalla.name)
 
-        capture_screen() #''' debug purposes '''
-        if os.path.exists(self.pantalla.image_folder):
+        haystack = ("{}{}.png".format(TEMP_IMGS, pantalla.name))
+        capture_screen(pantalla.name)
+        # ''' debug purposes '''
+        if os.path.exists(pantalla.image_folder):
 
-            haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+            #haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
             '''iterate over elements with non _ startswhith '''
-            for filename in [x for x in os.listdir(self.pantalla.image_folder) if
+            for filename in [x for x in os.listdir(pantalla.image_folder) if
                              not x.startswith('_') and os.path.isfile(
-                                 "{}{}{}".format(self.pantalla.image_folder, separator, x))]:
+                                 "{}{}{}".format(pantalla.image_folder, separator, x))]:
                 element_type = get_type_from_filename(filename)
                 element_name = get_element_name_from_filename(filename)
 
-                needle = "{}{}{}".format(self.pantalla.image_folder, separator, filename)
+                needle = "{}{}{}".format(pantalla.image_folder, separator, filename)
                 ''' call to tesseract controller'''
                 x, y = getElementCoords(haystack, needle)
                 self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
-                kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': self._current_window_name}
+                kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
 
                 '''building windows'''
                 elm_instace = dinamic_instance_elements(element_type, kw)
-                elm_instace and self.pantalla.add_element(elm_instace) or self.logger.error(
+                elm_instace and pantalla.add_element(elm_instace) or self.logger.error(
                     "elm_instace: {} Nulo".format(element_name))
 
-
-            self.logger.info("{}".format(self.pantalla))
+            salir = pantalla.get_element_by_name('salir')
+            pyautogui.moveTo(salir.x, salir.y, 1)
+            pyautogui.click()
+            sleep(2)
+            self.logger.info("{}".format(pantalla))
+            return pantalla
 
     '''check if app windows is already maped with the current dimensions'''
 
@@ -107,7 +117,7 @@ class WinMapper(object):
         try:
             if not self.is_already_mapped():
                 '''Se mapean los elementos x reconocimiento de imgs'''
-                self.map_window()
+                self.get_ancestors_map(self.pantalla)
                 '''serializamos y guardamos con el nombre la panta y su resolucion'''
                 if SAVE_MAPPING:
                     self.pantalla.save_to_file(self._current_window_name, resolution=screen_resolution())
@@ -152,12 +162,14 @@ if __name__ == '__main__':
     # obtencion de todos los elementos
     for k, v in pantalla.elements.items():
         print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
-    '''
+    
 
     kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}
     doc_parser = Doc_Parser(**kw)
-    wf_parsed_data= doc_parser.get_wf_parsed_data()
-    btn_aceptar= pantalla.get_element_by_name('aceptar')
-    commit =btn_aceptar.x, btn_aceptar.y
-    insert_declarante(wf_parsed_data,commit )
+    wf_parsed_data = doc_parser.get_wf_parsed_data()
+    btn_aceptar = pantalla.get_element_by_name('aceptar')
+    commit = btn_aceptar.x, btn_aceptar.y
+    kw = {'payload': wf_parsed_data, 'callback': None, 'action': 'insert_declarante' }
+    insert_declarante(wf_parsed_data, None, commit)
     # print("inspect me")
+    '''
