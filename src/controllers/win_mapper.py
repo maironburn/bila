@@ -1,5 +1,4 @@
 from common_config import TEMP_IMGS, MAPPED_WINDOWS, FOREGROUND_THREAD, SAVE_MAPPING
-from settings.screen_schemes import windows_skels
 import os
 from os.path import sep as separator
 from src.models.pantalla import Pantalla
@@ -11,12 +10,10 @@ import json
 from src.controllers.doc_parser import Doc_Parser
 from common_config import APP_NAME
 from src.helpers.screen import screen_resolution, capture_screen
-from src.helpers.common import dinamic_instance_elements, get_type_from_filename, \
-    get_element_name_from_filename
+from src.helpers.screen_mapper import dinamic_instance_elements, get_type_from_filename, \
+    get_element_name_from_filename, load_json_skel
 import pyautogui
-from time import sleep
-
-from src.controllers.automation import evaluate_action
+from src.controllers.automation import evaluate_action, go_back
 
 '''
 import for testing
@@ -36,7 +33,7 @@ class WinMapper(object):
         self.logger = AppLogger.create_log() if not self.logger else kw.get('logger')
         self._current_window_name = kw.get('current')
         if self._current_window_name:
-            self.pantalla = self.load_json_skel(self._current_window_name)
+            self.pantalla = load_json_skel(self._current_window_name)
             self.load_elements(self.pantalla)
 
             '''se instancia el controlador do not disturb'''
@@ -49,52 +46,53 @@ class WinMapper(object):
 
             self.load_or_create_mapping()
 
-    def load_json_skel(self, pantalla_name):
-
-        window = getattr(windows_skels, pantalla_name)
-        if windows_skels:
-            return Pantalla(**window)
-
-        return None
-
     def get_ancestors_map(self, instance=None):
-
+        ''' recursion ascendente para mapear las pantallas padres'''
         while instance.parent != None:
-            pantalla = self.load_json_skel(instance.parent)
+            pantalla = load_json_skel(instance.parent)
             self.load_elements(pantalla)
             instance.parent = pantalla
 
             return self.get_ancestors_map(instance.parent)
 
+    def create_element_instance(self, kw):
+        ''' Instancia a los elementos componentes de la pantalla
+            a partir de la imagen del dataset se obtiene el tipo de elemento
+            y su nombre...
+            p_ej: boton_declarantes --> tipo: boton, nombre: declarante
+        '''
+        filename = kw.get('filename')
+        haystack = kw.get('haystack')
+        pantalla = kw.get('pantalla')
+        element_type = get_type_from_filename(filename)
+        element_name = get_element_name_from_filename(filename)
+        needle = "{}{}{}".format(pantalla.image_folder, separator, filename)
+        ''' call to tesseract controller'''
+        x, y = getElementCoords(haystack, needle)
+        self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
+        kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
+        '''building windows'''
+
+        elm_instace = dinamic_instance_elements(element_type, kw)
+        elm_instace and pantalla.add_element(elm_instace) or self.logger.error(
+            "elm_instace: {} Nulo".format(element_name))
+
     def load_elements(self, pantalla):
-        ''' Carga los elemnetos integrantes de la pantalla'''
-        # haystack = "{}.png".format(pantalla.name)
+
+        ''' Carga los elemnetos integrantes de la pantalla
+            mapeados en recursion ascendente
+        '''
         haystack = ("{}{}.png".format(TEMP_IMGS, pantalla.name))
         capture_screen(pantalla.name)
         if os.path.exists(pantalla.image_folder):
-            # haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
             '''iterate over elements with non _ startswhith '''
             for filename in [x for x in os.listdir(pantalla.image_folder) if
                              not x.startswith('_') and os.path.isfile(
                                  "{}{}{}".format(pantalla.image_folder, separator, x))]:
-                element_type = get_type_from_filename(filename)
-                element_name = get_element_name_from_filename(filename)
-                needle = "{}{}{}".format(pantalla.image_folder, separator, filename)
-                ''' call to tesseract controller'''
-                x, y = getElementCoords(haystack, needle)
-                self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
-                kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
-                '''building windows'''
-                elm_instace = dinamic_instance_elements(element_type, kw)
-                elm_instace and pantalla.add_element(elm_instace) or self.logger.error(
-                    "elm_instace: {} Nulo".format(element_name))
-
-            salir = pantalla.get_element_by_name('salir')
-            if pantalla.name != 'main':
-                pyautogui.moveTo(salir.x, salir.y, 1)
-                pyautogui.click()
-                sleep(2)
-
+                kw = {'filename': filename, 'pantalla': pantalla, 'haystack': haystack}
+                self.pantalla.add_element(self.create_element_instance(kw))
+            ''' mapeada la pantalla va a la pantalla padre'''
+            go_back(pantalla)
             self.logger.info("{}".format(pantalla))
             return pantalla
 
@@ -169,7 +167,7 @@ if __name__ == '__main__':
     '''
 
     btn_declarantes = winmaper.get_element_by_name_at_tree(pantalla, 'declarantes')
-    pyautogui.moveTo( btn_declarantes.x, btn_declarantes.y, 1)
+    pyautogui.moveTo(btn_declarantes.x, btn_declarantes.y, 1)
     pyautogui.click()
 
     kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}

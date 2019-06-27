@@ -3,6 +3,7 @@
 import pyautogui
 from pywinauto import keyboard
 import pyperclip
+from time import sleep
 
 
 
@@ -20,6 +21,13 @@ def evaluate_action(kw=None):
     if action:
         dict_actions[action](kw)
 
+
+def go_back(pantalla):
+    salir = pantalla.get_element_by_name('salir')
+    if salir and pantalla.name != 'main':
+        pyautogui.moveTo(salir.x, salir.y, 1)
+        pyautogui.click()
+        sleep(1)
 
 def insert_declarante(kw):
     #(payload, callback, commit=(), restart_op=()):
