@@ -69,12 +69,9 @@ class WinMapper(object):
     def load_elements(self, pantalla):
         ''' Carga los elemnetos integrantes de la pantalla'''
         # haystack = "{}.png".format(pantalla.name)
-
         haystack = ("{}{}.png".format(TEMP_IMGS, pantalla.name))
         capture_screen(pantalla.name)
-        # ''' debug purposes '''
         if os.path.exists(pantalla.image_folder):
-
             # haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
             '''iterate over elements with non _ startswhith '''
             for filename in [x for x in os.listdir(pantalla.image_folder) if
@@ -82,13 +79,11 @@ class WinMapper(object):
                                  "{}{}{}".format(pantalla.image_folder, separator, x))]:
                 element_type = get_type_from_filename(filename)
                 element_name = get_element_name_from_filename(filename)
-
                 needle = "{}{}{}".format(pantalla.image_folder, separator, filename)
                 ''' call to tesseract controller'''
                 x, y = getElementCoords(haystack, needle)
                 self.logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
                 kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
-
                 '''building windows'''
                 elm_instace = dinamic_instance_elements(element_type, kw)
                 elm_instace and pantalla.add_element(elm_instace) or self.logger.error(
