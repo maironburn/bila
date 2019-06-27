@@ -10,7 +10,7 @@ class Doc_Parser(object):
 
     def __init__(self, **kw):
 
-        self.doc = "{}{}{}".format(WORKFLOWS, sep, kw.get('doc_src'))
+        self.doc = "{}{}{}".format(WORKFLOWS, sep, kw.get('document'))
         ''' parametros adicionales del documento , delimitadores, indices '''
         args = kw.get('args', None)
 

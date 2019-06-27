@@ -63,6 +63,7 @@ def create_element_instance(kw):
 
 
 def load_elements(pantalla):
+
     ''' Carga los elemnetos integrantes de la pantalla
         mapeados en recursion ascendente
     '''

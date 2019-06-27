@@ -29,16 +29,13 @@ class Pantalla(object):
 
         return None
 
-
-
-
     def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana
         with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, window_name, resolution),
                   'w') as outfile:
             outfile.write("{}".format(self.__repr__()))
 
-    def get_doc_parser_repr(self):
+    def get_document_mapped_columns_to_coord(self):
         '''
             devuelve las coordenadas x,y de cada Elemnto de la lista de elementos
             para que el automatismo realice las acciones oportunas

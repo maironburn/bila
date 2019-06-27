@@ -4,10 +4,10 @@ from os.path import sep as separator
 from src.models.pantalla import Pantalla
 
 from loggin.app_logger import AppLogger
-from src.controllers.win_app_handler import WinAppHandler
+from src.controllers.dnd_daemon import WinAppHandler
 import threading
 import json
-from src.controllers.doc_parser import Doc_Parser
+from src.controllers.document_parser import Doc_Parser
 from common_config import APP_NAME
 from src.helpers.screen import screen_resolution
 from src.helpers.screen_mapper import dinamic_instance_elements, get_type_from_filename, \
@@ -121,14 +121,14 @@ if __name__ == '__main__':
     pyautogui.moveTo(btn_declarantes.x, btn_declarantes.y, 1)
     pyautogui.click()
 
-    kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}
+    kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
     doc_parser = Doc_Parser(**kw)
     wf_parsed_data = doc_parser.get_wf_parsed_data()
-    btn_aceptar = pantalla.get_element_by_name('aceptar')
+    #btn_aceptar = pantalla.get_element_by_name('aceptar')
 
     kw = {'payload': wf_parsed_data, 'callback': None,
-          'action': 'insert_declarante', 'obj_pantalla': pantalla,
+          'action': 'insert_declarante', 'screen_tree_obj': pantalla,
           'current_screen': 'main',
-          'action_screen': 'nuevo_declarante'}
+          'target_screen': 'nuevo_declarante'}
     evaluate_action(kw)
     # print("inspect me")
