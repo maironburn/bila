@@ -22,7 +22,13 @@ def evaluate_action(kw=None):
         dict_actions[action](kw)
 
 
+
+def goto_screen():
+    pass
+
+
 def go_back(pantalla):
+
     salir = pantalla.get_element_by_name('salir')
     if salir and pantalla.name != 'main':
         pyautogui.moveTo(salir.x, salir.y, 1)

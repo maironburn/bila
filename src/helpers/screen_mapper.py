@@ -6,6 +6,7 @@ from os import listdir
 from common_config import TEMP_IMGS
 from src.helpers.screen import capture_screen
 from src.controllers.automation import go_back
+from src.controllers.img_recognition import getElementCoords
 
 
 def get_type_from_filename(filename):
@@ -38,7 +39,30 @@ def load_json_skel(pantalla_name):
     return None
 
 
-def load_elements(self, pantalla):
+def create_element_instance(kw):
+    ''' Instancia a los elementos componentes de la pantalla
+        a partir de la imagen del dataset se obtiene el tipo de elemento
+        y su nombre...
+        p_ej: boton_declarantes --> tipo: boton, nombre: declarante
+    '''
+    filename = kw.get('filename')
+    haystack = kw.get('haystack')
+    pantalla = kw.get('pantalla')
+
+    element_type = get_type_from_filename(filename)
+    element_name = get_element_name_from_filename(filename)
+    needle = "{}{}{}".format(pantalla.image_folder, separator, filename)
+    ''' call to tesseract controller'''
+    x, y = getElementCoords(haystack, needle)
+    # logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
+    kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
+    '''building windows'''
+
+    elm_instance = dinamic_instance_elements(element_type, kw)
+    elm_instance and pantalla.add_element(elm_instance)
+
+
+def load_elements(pantalla):
     ''' Carga los elemnetos integrantes de la pantalla
         mapeados en recursion ascendente
     '''
@@ -50,18 +74,16 @@ def load_elements(self, pantalla):
                          not x.startswith('_') and isfile(
                              "{}{}{}".format(pantalla.image_folder, separator, x))]:
             kw = {'filename': filename, 'pantalla': pantalla, 'haystack': haystack}
-            self.pantalla.add_element(self.create_element_instance(kw))
+            pantalla.add_element(create_element_instance(kw))
         ''' mapeada la pantalla va a la pantalla padre'''
         go_back(pantalla)
-        self.logger.info("{}".format(pantalla))
+        # self.logger.info("{}".format(pantalla))
         return pantalla
 
 
-def get_ancestors_map(instance=None):
-    ''' recursion ascendente para mapear las pantallas padres'''
-    while instance.parent != None:
-        pantalla = load_json_skel(instance.parent)
-        load_elements(pantalla)
-        instance.parent = pantalla
-
-        return get_ancestors_map(instance.parent)
+def get_element_by_name_at_tree(pantalla, name):
+    element = pantalla.get_element_by_name(name)
+    if element:
+        return element
+    else:
+        return get_element_by_name_at_tree(pantalla.parent, name)
