@@ -9,7 +9,7 @@ main = {
                        'presentadores': '', 'copia_seguridad': '',
                        'instalacion_actualizacion': '',
                        'configurar_plataforma': '', 'utilidades': '',
-                       'ayuda': '', 'salir': ''}
+                       'ayuda': '', 'exit': ''}
 }
 
 declarantes = {

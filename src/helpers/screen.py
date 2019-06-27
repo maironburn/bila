@@ -42,7 +42,7 @@ def tesseract_data_to_string(string_data, update_with_coord=True):
 
 
 def ocr_screen_recognition(src_img=None, txt_needle=None):
-    haystack_text = pytesseract.image_to_data(Image.open('%s' % (src_img,)))
+    haystack_text = pytesseract.image_to_data(Image.open('%s' % (src_img,)),lang="spa")
     for k, v in dictio_screentext_identificative.items():
         if k in haystack_text.lower():
             return dictio_screentext_identificative[k]
@@ -90,9 +90,10 @@ def capture_screen(name="screenshot"):
 
 if __name__ == '__main__':
     # print("{}".format(screen_resolution()))
-    capture_screen()
+    #capture_screen()
     # src_img = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
-    haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+    haystack = ("{}{}".format(TEMP_IMGS, "declarantes.png"))
+    ocr_screen_recognition(haystack, "")
     samples = []
     dict_sample = {}
     for filename in [x for x in os.listdir(SCREEN_BANNERS)]:

@@ -27,6 +27,11 @@ class Pantalla(object):
         if self.has_element(element_name):
             return self.elements[element_name]
 
+        return None
+
+
+
+
     def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana
         with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, window_name, resolution),

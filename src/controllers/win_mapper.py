@@ -16,7 +16,7 @@ from src.helpers.common import dinamic_instance_elements, get_type_from_filename
 import pyautogui
 from time import sleep
 
-# from src.controllers.automation import insert_declarante
+from src.controllers.automation import evaluate_action
 
 '''
 import for testing
@@ -62,21 +62,20 @@ class WinMapper(object):
         while instance.parent != None:
             pantalla = self.load_json_skel(instance.parent)
             self.load_elements(pantalla)
-
             instance.parent = pantalla
 
-            return self.get_ancestors(instance.parent)
+            return self.get_ancestors_map(instance.parent)
 
     def load_elements(self, pantalla):
         ''' Carga los elemnetos integrantes de la pantalla'''
-        #haystack = "{}.png".format(pantalla.name)
+        # haystack = "{}.png".format(pantalla.name)
 
         haystack = ("{}{}.png".format(TEMP_IMGS, pantalla.name))
         capture_screen(pantalla.name)
         # ''' debug purposes '''
         if os.path.exists(pantalla.image_folder):
 
-            #haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
+            # haystack = ("{}{}".format(TEMP_IMGS, "screenshot.png"))
             '''iterate over elements with non _ startswhith '''
             for filename in [x for x in os.listdir(pantalla.image_folder) if
                              not x.startswith('_') and os.path.isfile(
@@ -96,9 +95,11 @@ class WinMapper(object):
                     "elm_instace: {} Nulo".format(element_name))
 
             salir = pantalla.get_element_by_name('salir')
-            pyautogui.moveTo(salir.x, salir.y, 1)
-            pyautogui.click()
-            sleep(2)
+            if pantalla.name != 'main':
+                pyautogui.moveTo(salir.x, salir.y, 1)
+                pyautogui.click()
+                sleep(2)
+
             self.logger.info("{}".format(pantalla))
             return pantalla
 
@@ -143,6 +144,14 @@ class WinMapper(object):
 
     # <editor-fold desc="Getter / Setter">
 
+    def get_element_by_name_at_tree(self, pantalla, name):
+
+        element = pantalla.get_element_by_name(name)
+        if element:
+            return element
+        else:
+            return self.get_element_by_name_at_tree(pantalla.parent, name)
+
     @property
     def pantalla(self):
         return self._pantalla
@@ -162,14 +171,20 @@ if __name__ == '__main__':
     # obtencion de todos los elementos
     for k, v in pantalla.elements.items():
         print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
-    
+    '''
+
+    btn_declarantes = winmaper.get_element_by_name_at_tree(pantalla, 'declarantes')
+    pyautogui.moveTo( btn_declarantes.x, btn_declarantes.y, 1)
+    pyautogui.click()
 
     kw = {'doc_src': 'macro_nueva_decarante.xls', 'args': pantalla.get_doc_parser_repr()}
     doc_parser = Doc_Parser(**kw)
     wf_parsed_data = doc_parser.get_wf_parsed_data()
     btn_aceptar = pantalla.get_element_by_name('aceptar')
-    commit = btn_aceptar.x, btn_aceptar.y
-    kw = {'payload': wf_parsed_data, 'callback': None, 'action': 'insert_declarante' }
-    insert_declarante(wf_parsed_data, None, commit)
+
+    kw = {'payload': wf_parsed_data, 'callback': None,
+          'action': 'insert_declarante', 'obj_pantalla': pantalla,
+          'current_screen': 'main',
+          'action_screen': 'nuevo_declarante'}
+    evaluate_action(kw)
     # print("inspect me")
-    '''
