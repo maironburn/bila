@@ -31,7 +31,7 @@ nuevo_declarante = {
                        'apellido1': '',
                        'apellido2': '',
                        'aceptar': '',
-                       'tab_telf_mail': '',
+                       'tab_telf_email': '',
                        'tab_domicilio': '',
                        'tab_pago_telematico': '',
                        'tab_representante_legal': '',

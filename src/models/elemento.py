@@ -1,11 +1,10 @@
 class Element(object):
-
     _name = ''
     _image = ''
     _parent = None
     _x = 0.0
     _y = 0.0
-
+    _screen_related= None
     def __init__(self, kw):
 
         self._name = kw.get('_name')
@@ -13,6 +12,7 @@ class Element(object):
         self._parent = kw.get('_parent')
         self._x = kw.get('_x')
         self._y = kw.get('_y')
+        self._screen_related = kw.get('_screen_related')
 
     # <editor-fold desc="Getter y Setters">
 
@@ -67,19 +67,45 @@ class Element(object):
 
 class Boton(Element):
 
-    def __init__(self,kw):
+    def __init__(self, kw):
         super().__init__(kw)
-        #self._child_screen = kw.get('child_screen')
+        # self._child_screen = kw.get('child_screen')
 
 
 class Tab(Element):
 
+    _is_active = False
+    _tag_folder = None
+
     def __init__(self, kw):
         super().__init__(kw)
-        #self._child_screen = kw.get('child_screen')
+
+        # self._child_screen = kw.get('child_screen')
+
+    # <editor-fold desc="Getter / Setters">
+
+    @property
+    def active(self):
+        return self._is_active
+
+    @active.setter
+    def active(self, value):
+        if value:
+            self._is_active = value
+
+    @property
+    def tag_folder(self):
+        return self._tag_folder
+
+    @tag_folder.setter
+    def tag_folder(self, value):
+        if value:
+            self._tag_folder = value
+    # </editor-fold>
+
 
 class Text(Element):
 
     def __init__(self, kw):
         super().__init__(kw)
-        #self._child_screen = kw.get('child_screen')
+        # self._child_screen = kw.get('child_screen')

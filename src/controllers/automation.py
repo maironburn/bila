@@ -6,8 +6,6 @@ import pyperclip
 from time import sleep
 
 
-
-
 def where_screen_am_i():
     pass
 
@@ -23,7 +21,28 @@ def evaluate_action(kw=None):
         dict_actions[action](kw)
 
 
-def goto_screen(screen_tree_obj, element_name):
+def active_tab(tabs_dict, tab_name):
+
+    if len(tabs_dict.keys()) and tab_name in tabs_dict.keys():
+        target = tabs_dict[tab_name]
+        pyautogui.moveTo(target.x, target.y, 1)
+        pyautogui.click()
+        target.active = True
+
+
+def goto_screen(screen_tree_obj, current_screen, target_screen):
+
+    path_tree= None
+    # while screen_tree_obj.parent:
+    #     path_tree=
+    #     btn_declarantes = screen_tree_obj.get_element_by_name('declarantes')
+    # click_coods = btn_declarantes.x, btn_declarantes.y
+    # pyautogui.moveTo(click_coods, 1)
+    # pyautogui.click()
+    # # sleep(2)
+
+
+def goto_screen_ori(screen_tree_obj, element_name):
 
     btn_declarantes = screen_tree_obj.get_element_by_name('declarantes')
     click_coods = btn_declarantes.x, btn_declarantes.y
@@ -33,7 +52,6 @@ def goto_screen(screen_tree_obj, element_name):
 
 
 def go_back(pantalla):
-
     salir = pantalla.get_element_by_name('salir')
     if salir and pantalla.name != 'main':
         pyautogui.moveTo(salir.x, salir.y, 1)

@@ -32,9 +32,12 @@ def dinamic_instance_elements(element_type, init_values):
 
 
 def load_json_skel(pantalla_name):
-    window = getattr(windows_skels, pantalla_name)
-    if windows_skels:
-        return Pantalla(**window)
+    try:
+        window = getattr(windows_skels, pantalla_name)
+        if windows_skels:
+            return Pantalla(**window)
+    except Exception as e:
+        pass
 
     return None
 
@@ -55,31 +58,63 @@ def create_element_instance(kw):
     ''' call to tesseract controller'''
     x, y = getElementCoords(haystack, needle)
     # logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
-    kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y, '_parent': pantalla.parent}
+    screen_related = None
+
+    kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y,
+          '_parent': pantalla.parent, '_screen_related': screen_related}
     '''building windows'''
 
     elm_instance = dinamic_instance_elements(element_type, kw)
     elm_instance and pantalla.add_element(elm_instance)
 
 
-def load_elements(pantalla):
+def create_screen(kw):
+    pass
 
-    ''' Carga los elemnetos integrantes de la pantalla
+
+
+def get_root(root=None):
+
+    if root.parent:
+        root = root.parent
+        load_elements(root)
+        for e in root.elements:
+            p = load_json_skel(e)
+            if p:
+                load_elements(p)
+        return get_root(root)
+
+    return root
+
+def load_elements(elemento_contenedor, callback=None, callback_args=None):
+    ''' Carga los elemnetos VISIBLES integrantes de un elmento contenedor: pantalla, tab
         mapeados en recursion ascendente
     '''
-    haystack = ("{}{}.png".format(TEMP_IMGS, pantalla.name))
-    capture_screen(pantalla.name)
-    if exists(pantalla.image_folder):
-        '''iterate over elements with non _ startswhith '''
-        for filename in [x for x in listdir(pantalla.image_folder) if
+    haystack = ("{}{}.png".format(TEMP_IMGS, elemento_contenedor.name))
+    capture_screen(elemento_contenedor.name)
+    if exists(elemento_contenedor.image_folder):
+        '''iterate over first level elements with non _ startswhith '''
+        for filename in [x for x in listdir(elemento_contenedor.image_folder) if
                          not x.startswith('_') and isfile(
-                             "{}{}{}".format(pantalla.image_folder, separator, x))]:
-            kw = {'filename': filename, 'pantalla': pantalla, 'haystack': haystack}
-            pantalla.add_element(create_element_instance(kw))
+                             "{}{}{}".format(elemento_contenedor.image_folder, separator, x))]:
+            kw = {'filename': filename, 'pantalla': elemento_contenedor, 'haystack': haystack}
+            elemento_contenedor.add_element(create_element_instance(kw))
         ''' mapeada la pantalla va a la pantalla padre'''
-        go_back(pantalla)
+            if
+        go_back(elemento_contenedor) #<------------------------------ comentado para probar la activacion de tabs
         # self.logger.info("{}".format(pantalla))
-        return pantalla
+        return elemento_contenedor
+
+
+
+def get_ancestors_map(instance=None):
+    ''' recursion ascendente para mapear las pantallas padres'''
+    while instance.parent:
+        pantalla = load_json_skel(instance.parent)
+        load_elements(pantalla)
+        instance.parent = pantalla
+
+        return get_ancestors_map(instance.parent)
 
 
 def get_element_by_name_at_tree(pantalla, name):

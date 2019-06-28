@@ -11,9 +11,8 @@ from src.controllers.document_parser import Doc_Parser
 from common_config import APP_NAME
 from src.helpers.screen import screen_resolution
 from src.helpers.screen_mapper import dinamic_instance_elements, get_type_from_filename, \
-    load_json_skel, get_element_by_name_at_tree, load_elements
+    load_json_skel, get_element_by_name_at_tree, load_elements, get_ancestors_map
 import pyautogui
-from src.controllers.automation import evaluate_action, go_back
 
 '''
 import for testing
@@ -46,15 +45,6 @@ class WinMapper(object):
 
             self.load_or_create_mapping()
 
-    def get_ancestors_map(self, instance=None):
-        ''' recursion ascendente para mapear las pantallas padres'''
-        while instance.parent:
-            pantalla = load_json_skel(instance.parent)
-            load_elements(pantalla)
-            instance.parent = pantalla
-
-            return self.get_ancestors_map(instance.parent)
-
     '''check if app windows is already maped with the current dimensions'''
 
     def is_already_mapped(self):
@@ -70,7 +60,8 @@ class WinMapper(object):
         try:
             if not self.is_already_mapped():
                 '''Se mapean los elementos x reconocimiento de imgs'''
-                self.get_ancestors_map(self.pantalla)
+                get_ancestors_map(
+                    self.pantalla)  # <------------------------------ comentado para probar la activacion de tabs
                 '''serializamos y guardamos con el nombre la panta y su resolucion'''
                 if SAVE_MAPPING:
                     self.pantalla.save_to_file(self._current_window_name, resolution=screen_resolution())
@@ -109,8 +100,17 @@ class WinMapper(object):
 
 
 if __name__ == '__main__':
+    from src.controllers.automation import evaluate_action, go_back, active_tab
+    from src.models.elemento import Tab
+    from src.helpers.screen_mapper import get_root
     winmaper = WinMapper({'current': 'nuevo_declarante'})
     pantalla = winmaper.pantalla
+    tabs = pantalla.get_dict_elements_from_type(Tab)
+    root = None
+    root= get_root(pantalla)
+
+    active_tab(tabs, 'actividades')
+    #goto_screen(pantalla, 'main_window', 'nuevo_declarante')
     '''
     elmt = pantalla.get_element_by_name('back')
     # obtencion de todos los elementos
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
     doc_parser = Doc_Parser(**kw)
     wf_parsed_data = doc_parser.get_wf_parsed_data()
-    #btn_aceptar = pantalla.get_element_by_name('aceptar')
+    # btn_aceptar = pantalla.get_element_by_name('aceptar')
 
     kw = {'payload': wf_parsed_data, 'callback': None,
           'action': 'insert_declarante', 'screen_tree_obj': pantalla,

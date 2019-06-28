@@ -26,8 +26,28 @@ class Pantalla(object):
     def get_element_by_name(self, element_name):
         if self.has_element(element_name):
             return self.elements[element_name]
-
         return None
+
+    def get_root(self, root=None):
+
+        if root.parent:
+            root = root.parent
+            return self.get_root(root)
+
+        return root
+
+    def get_dict_elements_from_type(self, element_type):
+        '''get dictionary k: nombre, v: instance of type
+            on the current level (no recursion...at the moment, dont know if could be neccesary further on
+        '''
+        dict_elements = {}
+        if self.elements:
+            for e in self.elements:
+                if type(self.elements[e]) is element_type:
+                    dict_elements.update({e: self.elements[e]})
+            # return [self.elements[x] for x in self.elements if type(self.elements[x]) is element_type]
+
+        return dict_elements
 
     def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana
