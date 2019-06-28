@@ -31,5 +31,15 @@ nuevo_declarante = {
                        'apellido1': '',
                        'apellido2': '',
                        'aceptar': '',
+                       'tab_telf_mail': '',
+                       'tab_domicilio': '',
+                       'tab_pago_telematico': '',
+                       'tab_representante_legal': '',
+                       'tab_persona_contacto': '',
+                       'tab_actividades': '',
+                       'add_telefono': '',
+                       'add_email': '',
+                       'add_common': '',
+                       'copiar_actividad_otro_ejercicio': '',
                        'salir': ''}
 }
