@@ -66,6 +66,12 @@ class Pantalla(object):
 
         return tabs_name
 
+    def set_all_tab_inactive(self):
+        for e in self.elements:
+            if isinstance(self.elements[e], Tab):
+                self.elements[e].is_active = False
+
+
     def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana
         with open('{}{}{}{}'.format(MAPPED_WINDOWS, separator, window_name, resolution),

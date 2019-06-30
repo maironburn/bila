@@ -1,4 +1,4 @@
-from common_config import TEMP_IMGS, MAPPED_WINDOWS, FOREGROUND_THREAD, SAVE_MAPPING
+from common_config import  MAPPED_WINDOWS, FOREGROUND_THREAD, SAVE_MAPPING
 import os
 from os.path import sep as separator
 from src.models.pantalla import Pantalla
@@ -11,8 +11,8 @@ from src.controllers.document_parser import Doc_Parser
 from common_config import APP_NAME
 from src.helpers.screen import screen_resolution
 from src.helpers.screen_mapper import dinamic_instance_elements, get_type_from_filename, \
-    load_json_skel, get_element_by_name_at_tree, load_elements, get_ancestors_map
-import pyautogui
+    load_json_skel, load_elements, get_ancestors_map
+
 
 '''
 import for testing
@@ -102,14 +102,15 @@ class WinMapper(object):
 if __name__ == '__main__':
     from src.controllers.automation import evaluate_action, go_back, active_tab, goto_screen
     from src.helpers.screen_mapper import map_tabs
-    from src.models.elemento import Tab
-    from src.helpers.screen_mapper import get_root
 
     winmaper = WinMapper({'current': 'nuevo_declarante'})
     pantalla = winmaper.pantalla
     goto_screen(pantalla, "declarantes.nuevo_declarante")
     map_tabs (pantalla)
 
+    # pte de desactivar los map
+    # bloque de acciones en automation para datos especiales
+    #
     kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
     doc_parser = Doc_Parser(**kw)
     wf_parsed_data = doc_parser.get_wf_parsed_data()

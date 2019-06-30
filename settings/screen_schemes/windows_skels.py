@@ -29,9 +29,3 @@ nuevo_declarante = {
     "_dict_elements": {}
 }
 
-telf_mail = {
-    "_name": "telf_mail",
-    "_parent": "nuevo_declarante",
-    "_img_folder": "{}{}{}".format(nuevo_declarante['_img_folder'], os.path.sep, 'telf_mail'),
-    "_dict_elements": {}
-}
