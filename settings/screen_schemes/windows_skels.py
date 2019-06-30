@@ -26,20 +26,12 @@ nuevo_declarante = {
     "_name": "nuevo_declarante",
     "_parent": "declarantes",
     "_img_folder": "{}{}{}".format(declarantes['_img_folder'], os.path.sep, 'nuevo_declarante'),
-    "_dict_elements": {'nif': '', 'nombre_rs': '',
-                       # ...
-                       'apellido1': '',
-                       'apellido2': '',
-                       'aceptar': '',
-                       'tab_telf_email': '',
-                       'tab_domicilio': '',
-                       'tab_pago_telematico': '',
-                       'tab_representante_legal': '',
-                       'tab_persona_contacto': '',
-                       'tab_actividades': '',
-                       'add_telefono': '',
-                       'add_email': '',
-                       'add_common': '',
-                       'copiar_actividad_otro_ejercicio': '',
-                       'salir': ''}
+    "_dict_elements": {}
+}
+
+telf_mail = {
+    "_name": "telf_mail",
+    "_parent": "nuevo_declarante",
+    "_img_folder": "{}{}{}".format(nuevo_declarante['_img_folder'], os.path.sep, 'telf_mail'),
+    "_dict_elements": {}
 }

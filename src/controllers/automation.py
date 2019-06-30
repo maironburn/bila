@@ -4,7 +4,7 @@ import pyautogui
 from pywinauto import keyboard
 import pyperclip
 from time import sleep
-
+from src.models.elemento import Tab
 
 def where_screen_am_i():
     pass
@@ -22,28 +22,27 @@ def evaluate_action(kw=None):
 
 
 def active_tab(tabs_dict, tab_name):
-
+    from src.helpers.screen_mapper import load_elements
     if len(tabs_dict.keys()) and tab_name in tabs_dict.keys():
         target = tabs_dict[tab_name]
         pyautogui.moveTo(target.x, target.y, 1)
         pyautogui.click()
-        target.active = True
+        target.is_active = True
+        if not target.is_mapped:
+            load_elements(target,get_back=False)
 
 
-def goto_screen(screen_tree_obj, current_screen, target_screen):
 
-    path_tree= None
-    # while screen_tree_obj.parent:
-    #     path_tree=
-    #     btn_declarantes = screen_tree_obj.get_element_by_name('declarantes')
-    # click_coods = btn_declarantes.x, btn_declarantes.y
-    # pyautogui.moveTo(click_coods, 1)
-    # pyautogui.click()
-    # # sleep(2)
+def goto_screen(screen, path=None):
+    path_tree = path.split('.')
+    from src.helpers.screen_mapper import get_element_by_name_at_tree
+    for p in path_tree:
+        element = get_element_by_name_at_tree(screen, p)
+        pyautogui.moveTo(element.x, element.y, 1)
+        pyautogui.click()
 
 
 def goto_screen_ori(screen_tree_obj, element_name):
-
     btn_declarantes = screen_tree_obj.get_element_by_name('declarantes')
     click_coods = btn_declarantes.x, btn_declarantes.y
     pyautogui.moveTo(click_coods, 1)
@@ -60,10 +59,22 @@ def go_back(pantalla):
         # capture screen
 
 
+def action_block (pantalla):
+
+    tabs = pantalla.get_dict_elements_from_type(Tab)
+    active_tab(tabs, 'actividades')
+
 def insert_declarante(kw):
     # (payload, callback, commit=(), restart_op=()):
 
     # commit = btn_aceptar.x, btn_aceptar.y
+
+    # la accion de add un telef comprende:
+    # - activar el tab correspondiente /telf_email
+    # - hacer click sobre el boton de add
+    # - (se abre la ventana, capturarla)
+    # - identificar el textbox y check de predeterminado
+    # - click de aceptar
 
     payload = kw.get('payload',
                      None)  # ''' datos con el nombre de las cols mapeados a sus correspondientes coords de elementos'''

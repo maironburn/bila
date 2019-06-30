@@ -1,10 +1,12 @@
+import os
+
 class Element(object):
     _name = ''
     _image = ''
     _parent = None
     _x = 0.0
     _y = 0.0
-    _screen_related= None
+
     def __init__(self, kw):
 
         self._name = kw.get('_name')
@@ -12,7 +14,6 @@ class Element(object):
         self._parent = kw.get('_parent')
         self._x = kw.get('_x')
         self._y = kw.get('_y')
-        self._screen_related = kw.get('_screen_related')
 
     # <editor-fold desc="Getter y Setters">
 
@@ -66,41 +67,68 @@ class Element(object):
 
 
 class Boton(Element):
+    _popscreen = None  # is container ?
+    _popscreen_folder = None
 
     def __init__(self, kw):
         super().__init__(kw)
+        self._popscreen = kw.get('popscreen')
         # self._child_screen = kw.get('child_screen')
 
 
 class Tab(Element):
-
     _is_active = False
-    _tag_folder = None
+    _image_folder = None
+    _is_mapped = False
+    _elements = {}
 
     def __init__(self, kw):
         super().__init__(kw)
-
+        self._image_folder="{}{}{}".format(os.path.abspath(os.path.join(self._image, os.pardir)), os.path.sep, self.name)
+        self._elements = kw.get('_dict_elements', {})
         # self._child_screen = kw.get('child_screen')
 
     # <editor-fold desc="Getter / Setters">
 
+    def add_element(self, element):
+        if element:  # and issubclass(element, Elemento):
+            self.elements.update({element.name: element})
+
     @property
-    def active(self):
+    def is_active(self):
         return self._is_active
 
-    @active.setter
-    def active(self, value):
+    @is_active.setter
+    def is_active(self, value):
         if value:
             self._is_active = value
 
     @property
-    def tag_folder(self):
-        return self._tag_folder
+    def image_folder(self):
+        return self._image_folder
 
-    @tag_folder.setter
-    def tag_folder(self, value):
+    @image_folder.setter
+    def image_folder(self, value):
         if value:
-            self._tag_folder = value
+            self._image_folder = value
+
+    @property
+    def is_mapped(self):
+        return self._is_mapped
+
+    @is_mapped.setter
+    def is_mapped(self, value):
+        if value:
+            self._is_mapped = value
+
+    @property
+    def elements(self):
+        return self._elements
+
+    @elements.setter
+    def elements(self, value):
+        if value:
+            self._elements = value
     # </editor-fold>
 
 

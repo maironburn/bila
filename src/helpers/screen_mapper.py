@@ -7,6 +7,8 @@ from common_config import TEMP_IMGS
 from src.helpers.screen import capture_screen
 from src.controllers.automation import go_back
 from src.controllers.img_recognition import getElementCoords
+import os
+from src.models.elemento import Tab
 
 
 def get_type_from_filename(filename):
@@ -59,7 +61,8 @@ def create_element_instance(kw):
     x, y = getElementCoords(haystack, needle)
     # logger.info("{} -> located at x:{}, y:{}".format(element_name, x, y))
     screen_related = None
-
+    screen_related = os.path.sep.join(needle.split(os.path.sep)[:-1])
+    parent_dir = os.path.abspath(os.path.join(needle, os.pardir))
     kw = {'_name': element_name, '_image': needle, '_x': x, '_y': y,
           '_parent': pantalla.parent, '_screen_related': screen_related}
     '''building windows'''
@@ -72,9 +75,15 @@ def create_screen(kw):
     pass
 
 
+def map_tabs(pantalla):
+    from src.controllers.automation import active_tab
+    tabs = pantalla.get_dict_elements_from_type(Tab)
+    tab_names = pantalla.get_tab_names()
+    for tb in tab_names:
+        active_tab(tabs, tb)
+
 
 def get_root(root=None):
-
     if root.parent:
         root = root.parent
         load_elements(root)
@@ -86,7 +95,8 @@ def get_root(root=None):
 
     return root
 
-def load_elements(elemento_contenedor, callback=None, callback_args=None):
+
+def load_elements(elemento_contenedor, get_back=True, callback=None, callback_args=None):
     ''' Carga los elemnetos VISIBLES integrantes de un elmento contenedor: pantalla, tab
         mapeados en recursion ascendente
     '''
@@ -100,11 +110,11 @@ def load_elements(elemento_contenedor, callback=None, callback_args=None):
             kw = {'filename': filename, 'pantalla': elemento_contenedor, 'haystack': haystack}
             elemento_contenedor.add_element(create_element_instance(kw))
         ''' mapeada la pantalla va a la pantalla padre'''
-            if
-        go_back(elemento_contenedor) #<------------------------------ comentado para probar la activacion de tabs
+        # if
+        if get_back:
+            go_back(elemento_contenedor)  # <------------- comentado para probar la activacion de tabs
         # self.logger.info("{}".format(pantalla))
         return elemento_contenedor
-
 
 
 def get_ancestors_map(instance=None):

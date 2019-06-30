@@ -100,27 +100,15 @@ class WinMapper(object):
 
 
 if __name__ == '__main__':
-    from src.controllers.automation import evaluate_action, go_back, active_tab
+    from src.controllers.automation import evaluate_action, go_back, active_tab, goto_screen
+    from src.helpers.screen_mapper import map_tabs
     from src.models.elemento import Tab
     from src.helpers.screen_mapper import get_root
+
     winmaper = WinMapper({'current': 'nuevo_declarante'})
     pantalla = winmaper.pantalla
-    tabs = pantalla.get_dict_elements_from_type(Tab)
-    root = None
-    root= get_root(pantalla)
-
-    active_tab(tabs, 'actividades')
-    #goto_screen(pantalla, 'main_window', 'nuevo_declarante')
-    '''
-    elmt = pantalla.get_element_by_name('back')
-    # obtencion de todos los elementos
-    for k, v in pantalla.elements.items():
-        print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
-    '''
-
-    btn_declarantes = get_element_by_name_at_tree(pantalla, 'declarantes')
-    pyautogui.moveTo(btn_declarantes.x, btn_declarantes.y, 1)
-    pyautogui.click()
+    goto_screen(pantalla, "declarantes.nuevo_declarante")
+    map_tabs (pantalla)
 
     kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
     doc_parser = Doc_Parser(**kw)

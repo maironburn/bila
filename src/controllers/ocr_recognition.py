@@ -6,7 +6,7 @@ from PIL import Image
 from markdown.extensions.toc import slugify
 
 from common_config import OUTPUT_FOLDER
-from models import Coord
+
 #from extract_window import extract_window_screenshot
 
 

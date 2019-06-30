@@ -1,6 +1,7 @@
 import json
 from os.path import sep as separator
 from common_config import MAPPED_WINDOWS
+from src.models.elemento import Tab, Boton
 
 
 class Pantalla(object):
@@ -48,6 +49,22 @@ class Pantalla(object):
             # return [self.elements[x] for x in self.elements if type(self.elements[x]) is element_type]
 
         return dict_elements
+
+    def get_active_tab(self):
+        for e in self.elements:
+            if isinstance(self.elements[e], Tab) and self.elements[e].is_active:
+                return self.elements[e]
+
+        return None
+
+    def get_tab_names(self):
+        '''listado de elementos de tipo tab'''
+        tabs_name = []
+        for e in self.elements:
+            if isinstance(self.elements[e], Tab):
+                tabs_name.append(e)
+
+        return tabs_name
 
     def save_to_file(self, window_name, resolution):
         # @todo, refresh de las dimensiones de la ventana

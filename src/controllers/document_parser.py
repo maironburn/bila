@@ -3,6 +3,7 @@ from common_config import WORKFLOWS
 from os import path, sep
 import sys
 
+
 class Doc_Parser(object):
     _doc = None
     _df = pd.DataFrame
@@ -27,11 +28,15 @@ class Doc_Parser(object):
         '''
         try:
             # self.df = self._reader(self.doc)
-            self._df = pd.read_excel(self.doc,encoding=sys.getfilesystemencoding())
+            self._df = pd.read_excel(self.doc, encoding=sys.getfilesystemencoding())
             new_index = []
+            aditional_data = []
             for c in self._df.columns:
-                if c and len(c) and c in args.keys():
-                    new_index.append(args[c])
+                if c and len(c):
+                    if c in args.keys():
+                        new_index.append(args[c])
+                    else:
+                        new_index.append(c)
 
             # esta comprobacion deberia ir arriba y evitar reindex si no hay correspondencia numerica de elementos
             if self._df.shape[1] == len(new_index):
@@ -50,12 +55,14 @@ class Doc_Parser(object):
             if not self.df is None:
                 for index, row in self.df.iterrows():
                     data_list = []
-                    for i in range(row.shape[0]): #''' num of columns'''
+                    for i in range(row.shape[0]):  # ''' num of columns'''
                         # print("{} -> {}".format(df.columns[i], row[i]))
-                        data_list.append({'x': self.df.columns[i].split(',')[0],
-                                          'y': self.df.columns[i].split(',')[1],
-                                          'payload': row[i]})
-
+                        if ',' in self.df.columns[i]:
+                            data_list.append({'x': self.df.columns[i].split(',')[0],
+                                              'y': self.df.columns[i].split(',')[1],
+                                               self.df.columns[i]: row[i]})
+                        else:
+                            data_list.append({self.df.columns[i]: row[i]})
                     extracted_data.append(data_list)
 
             return extracted_data
