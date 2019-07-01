@@ -29,3 +29,10 @@ nuevo_declarante = {
     "_dict_elements": {}
 }
 
+popscreen_add_telf = {
+    "_name": "popscreen_add_telf",
+    "_parent": "nuevo_declarante",
+    "_img_folder": "{}{}{}{}{}".format(nuevo_declarante['_img_folder'], os.path.sep, 'telf_email', os.path.sep,
+                                       'popscreen_add_telf'),
+    "_dict_elements": {}
+}

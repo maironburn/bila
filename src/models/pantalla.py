@@ -133,3 +133,8 @@ class Pantalla(object):
             self._parent = value
 
     # </editor-fold>
+
+class Popscreen(Pantalla):
+
+    def __init__(self, kw):
+        super().__init__(kw)

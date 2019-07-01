@@ -38,24 +38,6 @@ def active_tab(tabs_dict, tab_name):
             sleep(1)
 
 
-def goto_screen_ori(screen, path=None):
-    from src.helpers.screen_mapper import load_json_skel, load_elements
-    from src.helpers.screen_mapper import get_element_by_name_at_tree
-
-    path_tree = path.split('.')
-    from src.helpers.screen_mapper import get_element_by_name_at_tree
-    for p in path_tree:
-        element = get_element_by_name_at_tree(screen, p)
-        pyautogui.moveTo(element.x, element.y, 1)
-        pyautogui.click()
-        # element = get_element_by_name_at_tree(screen, p)
-        # pyautogui.moveTo(element.x, element.y, 1)
-        # pyautogui.click()
-        # #screen =
-        # pantalla = load_json_skel(p)
-        # load_elements(pantalla)
-
-
 def goto_screen(screen, path=None):
     from src.helpers.screen_mapper import load_json_skel, load_elements
 
@@ -83,7 +65,6 @@ def goto_screen(screen, path=None):
         pantalla = load_json_skel(element_name)
         screen = load_elements(pantalla, get_back=False)
 
-
     return screen
 
 
@@ -92,6 +73,7 @@ def move_to_element(element):
         pyautogui.moveTo(element.x, element.y)
         pyautogui.click()
         sleep(1)
+
 
 def go_back(pantalla):
     salir = pantalla.get_element_by_name('salir')
@@ -102,18 +84,44 @@ def go_back(pantalla):
         # capture screen
 
 
-def action_block(pantalla):
+def action_block(pantalla, tab_name):
     tabs = pantalla.get_dict_elements_from_type(Tab)
-    active_tab(tabs, 'actividades')
+    active_tab(tabs, tab_name)
 
 
-def special_treatement_required(dato):
-    pass
+def special_treatement_required(pantalla, data):
+    from src.helpers.screen_mapper import load_json_skel, load_elements
+    action_block(pantalla, 'telef_email')
+    element = pantalla.elements['telf_email'].elements['add_telefono']
+    pyautogui.moveTo(element.x, element.y)
+    pyautogui.click()
+    sleep(1)
+
+    pantalla = load_json_skel('popscreen_add_telf')
+    screen = load_elements(pantalla, get_back=False)
+
+    for d in data:
+        if 'telefono' in d.keys():
+            telf = screen.elements['telef']
+            pyautogui.moveTo(telf.x, telf.y)
+            pyautogui.doubleClick()
+            pyperclip.copy(d.get('telefono'))
+            pyautogui.hotkey("ctrl", "v")
+
+        if 'telefono predeterminado' in d.keys():
+            if d.get('telefono predeterminado').lower() == 'si':
+                telf = screen.elements['telef_predeterminado']
+                pyautogui.moveTo(telf.x, telf.y)
+                pyautogui.click()
+
+    aceptar = screen.elements['aceptar']
+    pyautogui.moveTo(aceptar.x, aceptar.y)
+    pyautogui.click()
 
 
 def insert_declarante(kw):
     # (payload, callback, commit=(), restart_op=()):
-
+    from src.helpers.screen_mapper import load_json_skel, load_elements
     # commit = btn_aceptar.x, btn_aceptar.y
 
     # la accion de add un telef comprende:
@@ -133,25 +141,30 @@ def insert_declarante(kw):
     '''
     posicionamiento hacia la pantalla objetivo
     '''
-    # btn_declarantes = screen_tree_obj.get_element_by_name('target_screen')
-    # click_coods = btn_declarantes.x, btn_declarantes.y
-    # pyautogui.moveTo(click_coods, 1)
-    # pyautogui.click()
-    # sleep(2)
 
     for elements in payload:
         treatement_required = []
         for i in elements:
             if 'x' in i.keys() and 'y' in i.keys():
-                pyautogui.moveTo(int(i.get('x')), int(i.get('y')), 1)
+                pyautogui.moveTo(int(i.get('x')), int(i.get('y')))
                 pyautogui.doubleClick()
                 pyperclip.copy(i.get('payload'))
                 pyautogui.hotkey("ctrl", "v")
             else:
                 treatement_required.append(i)
 
-        special_treatement_required(treatement_required)
+        special_treatement_required(screen_tree_obj, treatement_required)
 
-        pyautogui.moveTo(commit)
+        commit = screen_tree_obj.elements['aceptar']
+        pyautogui.moveTo(commit.x, commit.y)
         pyautogui.click()
-        return
+        sleep(1)
+        ''' reload '''
+        pantalla = load_json_skel('declarantes')
+        screen = load_elements(pantalla, get_back=False)
+        sleep(1)
+        reload = screen.elements['nuevo_declarante']
+        pyautogui.moveTo(reload.x, reload.y)
+        pyautogui.click()
+
+        print("reload")
