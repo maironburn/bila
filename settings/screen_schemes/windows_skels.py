@@ -36,3 +36,12 @@ popscreen_add_telf = {
                                        'popscreen_add_telf'),
     "_dict_elements": {}
 }
+
+popscreen_add_domicilio = {
+    "_name": "popscreen_add_domicilio",
+    "_parent": "nuevo_declarante",
+    "_img_folder": "{}{}{}{}{}".format(nuevo_declarante['_img_folder'], os.path.sep, 'domicilio', os.path.sep,
+                                       'popscreen_add_domicilio'),
+    "_dict_elements": {}
+}
+

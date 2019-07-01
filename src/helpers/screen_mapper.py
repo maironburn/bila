@@ -109,7 +109,7 @@ def load_elements(elemento_contenedor, get_back=True, callback=None, callback_ar
                              "{}{}{}".format(elemento_contenedor.image_folder, separator, x))]:
             kw = {'filename': filename, 'pantalla': elemento_contenedor, 'haystack': haystack}
             elemento_contenedor.add_element(create_element_instance(kw))
-        637330197
+
         # if
         if get_back:
             go_back(elemento_contenedor)  # <------------- comentado para probar la activacion de tabs

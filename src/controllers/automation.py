@@ -89,30 +89,72 @@ def action_block(pantalla, tab_name):
     active_tab(tabs, tab_name)
 
 
-def special_treatement_required(pantalla, data):
+def set_telf_data(pantalla, data):
     from src.helpers.screen_mapper import load_json_skel, load_elements
     action_block(pantalla, 'telef_email')
+    '''add button'''
     element = pantalla.elements['telf_email'].elements['add_telefono']
     pyautogui.moveTo(element.x, element.y)
     pyautogui.click()
     sleep(1)
 
-    pantalla = load_json_skel('popscreen_add_telf')
+
+# def special_treatement_required(pantalla, data):               brute way
+#     from src.helpers.screen_mapper import load_json_skel, load_elements
+#     action_block(pantalla, 'telef_email')
+#     element = pantalla.elements['telf_email'].elements['add_telefono']
+#     pyautogui.moveTo(element.x, element.y)
+#     pyautogui.click()
+#     sleep(1)
+#
+#     pantalla = load_json_skel('popscreen_add_telf')
+#     screen = load_elements(pantalla, get_back=False)
+#
+#     for d in data:
+#         if 'telefono' in d.keys():
+#             telf = screen.elements['telef']
+#             pyautogui.moveTo(telf.x, telf.y)
+#             pyautogui.doubleClick()
+#             pyperclip.copy(d.get('telefono'))
+#             pyautogui.hotkey("ctrl", "v")
+#
+#         if 'telefono predeterminado' in d.keys():
+#             if d.get('telefono predeterminado').lower() == 'si':
+#                 telf = screen.elements['telef_predeterminado']
+#                 pyautogui.moveTo(telf.x, telf.y)
+#                 pyautogui.click()
+#
+#     aceptar = screen.elements['aceptar']
+#     pyautogui.moveTo(aceptar.x, aceptar.y)
+#     pyautogui.click()
+#
+#
+#
+def special_treatement_required(pantalla, data):
+    from src.helpers.screen_mapper import load_json_skel, load_elements
+
+    action_block(pantalla, 'domicilio')
+    element = pantalla.elements['domicilio'].elements['add_common']
+    pyautogui.moveTo(element.x, element.y)
+    pyautogui.click()
+    sleep(1)
+
+    pantalla = load_json_skel('popscreen_add_domicilio')
     screen = load_elements(pantalla, get_back=False)
 
     for d in data:
-        if 'telefono' in d.keys():
-            telf = screen.elements['telef']
-            pyautogui.moveTo(telf.x, telf.y)
-            pyautogui.doubleClick()
-            pyperclip.copy(d.get('telefono'))
-            pyautogui.hotkey("ctrl", "v")
+        for key, value in d.iteritems():  # iter on both keys and values
+            if key.startswith('telefono'):
+                set_telf_data(None, None)
 
-        if 'telefono predeterminado' in d.keys():
-            if d.get('telefono predeterminado').lower() == 'si':
-                telf = screen.elements['telef_predeterminado']
+            if 'domicilio' in d.keys():
+                telf = screen.elements['telef']
                 pyautogui.moveTo(telf.x, telf.y)
-                pyautogui.click()
+                pyautogui.doubleClick()
+                pyperclip.copy(d.get('telefono'))
+                pyautogui.hotkey("ctrl", "v")
+
+
 
     aceptar = screen.elements['aceptar']
     pyautogui.moveTo(aceptar.x, aceptar.y)
