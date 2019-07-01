@@ -6,6 +6,7 @@ import pyperclip
 from time import sleep
 from src.models.elemento import Tab
 
+
 def where_screen_am_i():
     pass
 
@@ -28,30 +29,69 @@ def active_tab(tabs_dict, tab_name):
         target = tabs_dict[tab_name]
         for tabs in tabs_dict.values():
             tabs.is_active = False
-        pyautogui.moveTo(target.x, target.y, 1)
+        pyautogui.moveTo(target.x, target.y)
         pyautogui.click()
         target.is_active = True
         if not target.is_mapped:
-            load_elements(target,get_back=False)
+            load_elements(target, get_back=False)
             target.is_mapped = True
+            sleep(1)
 
 
-def goto_screen(screen, path=None):
+def goto_screen_ori(screen, path=None):
+    from src.helpers.screen_mapper import load_json_skel, load_elements
+    from src.helpers.screen_mapper import get_element_by_name_at_tree
+
     path_tree = path.split('.')
     from src.helpers.screen_mapper import get_element_by_name_at_tree
     for p in path_tree:
         element = get_element_by_name_at_tree(screen, p)
         pyautogui.moveTo(element.x, element.y, 1)
         pyautogui.click()
+        # element = get_element_by_name_at_tree(screen, p)
+        # pyautogui.moveTo(element.x, element.y, 1)
+        # pyautogui.click()
+        # #screen =
+        # pantalla = load_json_skel(p)
+        # load_elements(pantalla)
 
 
-def goto_screen_ori(screen_tree_obj, element_name):
-    btn_declarantes = screen_tree_obj.get_element_by_name('declarantes')
-    click_coods = btn_declarantes.x, btn_declarantes.y
-    pyautogui.moveTo(click_coods, 1)
-    pyautogui.click()
-    # sleep(2)
+def goto_screen(screen, path=None):
+    from src.helpers.screen_mapper import load_json_skel, load_elements
 
+    if path and isinstance(path, str):
+        path = path.split('.')
+
+    if len(path) > 1:
+        root = path.pop(0)
+        pantalla = load_json_skel(root)
+        screen = load_elements(pantalla, get_back=False)
+        element_name = path.pop(0)
+        element = screen.get_element_by_name(element_name)
+        print("searching in screen : {}, el elemento: {}".format(screen.name, element_name))
+        move_to_element(element)
+
+        pantalla = load_json_skel(element_name)
+        screen = load_elements(pantalla, get_back=False)
+        sleep(1)
+        return goto_screen(pantalla, path)
+
+    else:
+        element_name = path.pop(0)
+        element = screen.get_element_by_name(element_name)
+        move_to_element(element)
+        pantalla = load_json_skel(element_name)
+        screen = load_elements(pantalla, get_back=False)
+
+
+    return screen
+
+
+def move_to_element(element):
+    if element:
+        pyautogui.moveTo(element.x, element.y)
+        pyautogui.click()
+        sleep(1)
 
 def go_back(pantalla):
     salir = pantalla.get_element_by_name('salir')
@@ -62,8 +102,7 @@ def go_back(pantalla):
         # capture screen
 
 
-def action_block (pantalla):
-
+def action_block(pantalla):
     tabs = pantalla.get_dict_elements_from_type(Tab)
     active_tab(tabs, 'actividades')
 
@@ -101,6 +140,7 @@ def insert_declarante(kw):
     # sleep(2)
 
     for elements in payload:
+        treatement_required = []
         for i in elements:
             if 'x' in i.keys() and 'y' in i.keys():
                 pyautogui.moveTo(int(i.get('x')), int(i.get('y')), 1)
@@ -108,7 +148,9 @@ def insert_declarante(kw):
                 pyperclip.copy(i.get('payload'))
                 pyautogui.hotkey("ctrl", "v")
             else:
-                special_treatement_required(i)
+                treatement_required.append(i)
+
+        special_treatement_required(treatement_required)
 
         pyautogui.moveTo(commit)
         pyautogui.click()

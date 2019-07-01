@@ -60,7 +60,7 @@ class Doc_Parser(object):
                         if ',' in self.df.columns[i]:
                             data_list.append({'x': self.df.columns[i].split(',')[0],
                                               'y': self.df.columns[i].split(',')[1],
-                                               self.df.columns[i]: row[i]})
+                                               'payload': row[i]})
                         else:
                             data_list.append({self.df.columns[i]: row[i]})
                     extracted_data.append(data_list)

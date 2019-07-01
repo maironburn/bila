@@ -128,8 +128,10 @@ def get_ancestors_map(instance=None):
 
 
 def get_element_by_name_at_tree(pantalla, name):
-    element = pantalla.get_element_by_name(name)
-    if element:
-        return element
-    else:
-        return get_element_by_name_at_tree(pantalla.parent, name)
+
+    if pantalla:
+        element = pantalla.get_element_by_name(name)
+        if element:
+            return element
+        else:
+            return get_element_by_name_at_tree(pantalla.parent, name)

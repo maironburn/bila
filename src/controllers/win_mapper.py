@@ -103,9 +103,10 @@ if __name__ == '__main__':
     from src.controllers.automation import evaluate_action, go_back, active_tab, goto_screen
     from src.helpers.screen_mapper import map_tabs
 
-    winmaper = WinMapper({'current': 'nuevo_declarante'})
+    winmaper = WinMapper({'current': 'main'})
     pantalla = winmaper.pantalla
-    goto_screen(pantalla, "declarantes.nuevo_declarante")
+    pantalla = goto_screen(pantalla, "main.declarantes.nuevo_declarante")
+    #goto_screen(pantalla, "main.declarantes.nuevo_declarante")
     map_tabs (pantalla)
 
     # pte de desactivar los map
