@@ -38,34 +38,30 @@ def active_tab(tabs_dict, tab_name):
             sleep(1)
 
 
-def goto_screen(screen, path=None):
+def load_fill_screen(screen_name):
     from src.helpers.screen_mapper import load_json_skel, load_elements
+    pantalla = load_json_skel(screen_name)
+    return load_elements(pantalla, get_back=False)
 
+
+def goto_screen(screen, path=None):
     if path and isinstance(path, str):
         path = path.split('.')
 
     if len(path) > 1:
+        ''' estructura pantalla.elemento...'''
         root = path.pop(0)
-        pantalla = load_json_skel(root)
-        screen = load_elements(pantalla, get_back=False)
-        element_name = path.pop(0)
-        element = screen.get_element_by_name(element_name)
-        print("searching in screen : {}, el elemento: {}".format(screen.name, element_name))
-        move_to_element(element)
+        screen = load_fill_screen(root)
+        element = path.pop(0)
+        move_to_element(screen.get_element_by_name(element))
+        screen = load_fill_screen(element)
+        return goto_screen(screen, path)
 
-        pantalla = load_json_skel(element_name)
-        screen = load_elements(pantalla, get_back=False)
-        sleep(1)
-        return goto_screen(pantalla, path)
-
-    else:
+    if path:
         element_name = path.pop(0)
         element = screen.get_element_by_name(element_name)
         move_to_element(element)
-        pantalla = load_json_skel(element_name)
-        screen = load_elements(pantalla, get_back=False)
-
-    return screen
+        return load_fill_screen(element_name)
 
 
 def move_to_element(element):
@@ -153,8 +149,6 @@ def special_treatement_required(pantalla, data):
                 pyautogui.doubleClick()
                 pyperclip.copy(d.get('telefono'))
                 pyautogui.hotkey("ctrl", "v")
-
-
 
     aceptar = screen.elements['aceptar']
     pyautogui.moveTo(aceptar.x, aceptar.y)
