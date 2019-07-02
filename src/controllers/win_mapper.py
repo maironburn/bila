@@ -112,7 +112,7 @@ if __name__ == '__main__':
     # pte de desactivar los map
     # bloque de acciones en automation para datos especiales
     #
-    #kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
+    #nankw = {'document': 'macro_nannueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
     kw = {'document': 'macro_nueva_declarante_domicilio_telef.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
 
     doc_parser = Doc_Parser(**kw)

@@ -85,18 +85,20 @@ def action_block(pantalla, tab_name):
     active_tab(tabs, tab_name)
 
 
-def nuevo_declarante_tab_action(tab_name, add_button, popscreen):
+def tab_activate_click_and_capture_popscreen(tab_name, add_button, popscreen_name, pantalla):
+    from src.helpers.screen_mapper import load_json_skel, load_elements
+
     action_block(pantalla, tab_name)
     element = pantalla.elements[tab_name].elements[add_button]
     pyautogui.moveTo(element.x, element.y)
     pyautogui.click()
     sleep(1)
-    pantalla = load_json_skel(popscreen)
+    pantalla = load_json_skel(popscreen_name)
 
     return load_elements(pantalla, get_back=False)
 
 
-def autofill_data_popscreen(data, dict_key, pantalla):
+def autofill_data_popscreen(data, dict_key, pantalla, commit_btn='aceptar'):
     for data in data[dict_key]:
         for k, v in data.items():
 
@@ -112,21 +114,24 @@ def autofill_data_popscreen(data, dict_key, pantalla):
                 pyautogui.doubleClick()
                 pyautogui.typewrite(str(v), 0.05)
 
-    commit = pantalla.get_element_by_name('aceptar')
+
+    commit = pantalla.get_element_by_name(commit_btn)
     pyautogui.moveTo(commit.x, commit.y)
     pyautogui.click()
 
 
 def special_treatement_required(pantalla, data):
-    from src.helpers.screen_mapper import load_json_skel, load_elements
-
     if len(data['domicilio_data']):
-        screen = nuevo_declarante_tab_action('domicilio', 'add_common', 'popscreen_add_domicilio')
-        autofill_data_popscreen(data, 'domicilio_data', pantalla)
+        screen = tab_activate_click_and_capture_popscreen('domicilio', 'add_common', 'popscreen_add_domicilio',
+                                                          pantalla)
+
+        autofill_data_popscreen(data, 'domicilio_data', screen)
 
     if len(data['telf_data']):
-        screen = nuevo_declarante_tab_action('telf_email', 'add_telefono', 'popscreen_add_telf')
-        autofill_data_popscreen(data, 'telf_data', pantalla)
+        screen = tab_activate_click_and_capture_popscreen('telf_email', 'add_telefono', 'popscreen_add_telf',
+                                                          pantalla)
+
+        autofill_data_popscreen(data, 'telf_data', screen)
 
 
 def insert_declarante(kw):
