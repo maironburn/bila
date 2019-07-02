@@ -85,74 +85,48 @@ def action_block(pantalla, tab_name):
     active_tab(tabs, tab_name)
 
 
-def set_telf_data(pantalla, data):
-    from src.helpers.screen_mapper import load_json_skel, load_elements
-    action_block(pantalla, 'telef_email')
-    '''add button'''
-    element = pantalla.elements['telf_email'].elements['add_telefono']
+def nuevo_declarante_tab_action(tab_name, add_button, popscreen):
+    action_block(pantalla, tab_name)
+    element = pantalla.elements[tab_name].elements[add_button]
     pyautogui.moveTo(element.x, element.y)
     pyautogui.click()
     sleep(1)
+    pantalla = load_json_skel(popscreen)
+
+    return load_elements(pantalla, get_back=False)
 
 
-# def special_treatement_required(pantalla, data):               brute way
-#     from src.helpers.screen_mapper import load_json_skel, load_elements
-#     action_block(pantalla, 'telef_email')
-#     element = pantalla.elements['telf_email'].elements['add_telefono']
-#     pyautogui.moveTo(element.x, element.y)
-#     pyautogui.click()
-#     sleep(1)
-#
-#     pantalla = load_json_skel('popscreen_add_telf')
-#     screen = load_elements(pantalla, get_back=False)
-#
-#     for d in data:
-#         if 'telefono' in d.keys():
-#             telf = screen.elements['telef']
-#             pyautogui.moveTo(telf.x, telf.y)
-#             pyautogui.doubleClick()
-#             pyperclip.copy(d.get('telefono'))
-#             pyautogui.hotkey("ctrl", "v")
-#
-#         if 'telefono predeterminado' in d.keys():
-#             if d.get('telefono predeterminado').lower() == 'si':
-#                 telf = screen.elements['telef_predeterminado']
-#                 pyautogui.moveTo(telf.x, telf.y)
-#                 pyautogui.click()
-#
-#     aceptar = screen.elements['aceptar']
-#     pyautogui.moveTo(aceptar.x, aceptar.y)
-#     pyautogui.click()
-#
-#
-#
+def autofill_data_popscreen(data, dict_key, pantalla):
+    for data in data[dict_key]:
+        for k, v in data.items():
+
+            if k == 'prederminado' and v.lower() == 'si':
+                elemento = pantalla.get_element_by_name('prederminado')
+                pyautogui.moveTo(elemento.x, elemento.y)
+                pyautogui.click()
+                # pyautogui.hotkey("ctrl", "v")
+
+            else:
+                elemento = pantalla.get_element_by_name(k)
+                pyautogui.moveTo(elemento.x, elemento.y)
+                pyautogui.doubleClick()
+                pyautogui.typewrite(str(v), 0.05)
+
+    commit = pantalla.get_element_by_name('aceptar')
+    pyautogui.moveTo(commit.x, commit.y)
+    pyautogui.click()
+
+
 def special_treatement_required(pantalla, data):
     from src.helpers.screen_mapper import load_json_skel, load_elements
 
-    action_block(pantalla, 'domicilio')
-    element = pantalla.elements['domicilio'].elements['add_common']
-    pyautogui.moveTo(element.x, element.y)
-    pyautogui.click()
-    sleep(1)
+    if len(data['domicilio_data']):
+        screen = nuevo_declarante_tab_action('domicilio', 'add_common', 'popscreen_add_domicilio')
+        autofill_data_popscreen(data, 'domicilio_data', pantalla)
 
-    pantalla = load_json_skel('popscreen_add_domicilio')
-    screen = load_elements(pantalla, get_back=False)
-
-    for d in data:
-        for key, value in d.iteritems():  # iter on both keys and values
-            if key.startswith('telefono'):
-                set_telf_data(None, None)
-
-            if 'domicilio' in d.keys():
-                telf = screen.elements['telef']
-                pyautogui.moveTo(telf.x, telf.y)
-                pyautogui.doubleClick()
-                pyperclip.copy(d.get('telefono'))
-                pyautogui.hotkey("ctrl", "v")
-
-    aceptar = screen.elements['aceptar']
-    pyautogui.moveTo(aceptar.x, aceptar.y)
-    pyautogui.click()
+    if len(data['telf_data']):
+        screen = nuevo_declarante_tab_action('telf_email', 'add_telefono', 'popscreen_add_telf')
+        autofill_data_popscreen(data, 'telf_data', pantalla)
 
 
 def insert_declarante(kw):
@@ -179,15 +153,13 @@ def insert_declarante(kw):
     '''
 
     for elements in payload:
-        treatement_required = []
+        treatement_required = clasify_data(elements)
         for i in elements:
             if 'x' in i.keys() and 'y' in i.keys():
                 pyautogui.moveTo(int(i.get('x')), int(i.get('y')))
                 pyautogui.doubleClick()
                 pyperclip.copy(i.get('payload'))
                 pyautogui.hotkey("ctrl", "v")
-            else:
-                treatement_required.append(i)
 
         special_treatement_required(screen_tree_obj, treatement_required)
 
@@ -204,3 +176,21 @@ def insert_declarante(kw):
         pyautogui.click()
 
         print("reload")
+
+
+def clasify_data(payload):
+    from src.helpers.screen_mapper import get_element_name_from_filename
+
+    special_data = {'domicilio_data': [],
+                    'telf_data': []
+                    }
+
+    for e in payload:
+        for key, value in e.items():  # iter on both keys and values
+            if key and key.startswith('domicilio'):
+                special_data['domicilio_data'].append({''.join(key.split('_')[1:]): value})
+
+            if key and key.startswith('telefono'):
+                special_data['telf_data'].append({''.join(key.split('_')[1:]): value})
+
+    return special_data

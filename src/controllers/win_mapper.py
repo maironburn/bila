@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # bloque de acciones en automation para datos especiales
     #
     #kw = {'document': 'macro_nueva_decarante.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
-    kw = {'document': 'macro_nueva_decarante_domicilio.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
+    kw = {'document': 'macro_nueva_declarante_domicilio_telef.xls', 'args': pantalla.get_document_mapped_columns_to_coord()}
 
     doc_parser = Doc_Parser(**kw)
     wf_parsed_data = doc_parser.get_wf_parsed_data()
@@ -124,4 +124,8 @@ if __name__ == '__main__':
           'current_screen': 'main',
           'target_screen': 'nuevo_declarante'}
     evaluate_action(kw)
+    # obtencion de todos los elementos
+    for k, v in pantalla.elements.items():
+        print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
+
     # print("inspect me")
