@@ -124,8 +124,5 @@ if __name__ == '__main__':
           'current_screen': 'main',
           'target_screen': 'nuevo_declarante'}
     evaluate_action(kw)
-    # obtencion de todos los elementos
-    for k, v in pantalla.elements.items():
-        print("elemento: {} --> x: {}, y: {}".format(k, v.x, v.y))
 
     # print("inspect me")
