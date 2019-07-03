@@ -39,6 +39,11 @@ def active_tab(tabs_dict, tab_name):
 
 
 def load_fill_screen(screen_name):
+    '''
+    :param screen_name: screen_name as match in screen_schemes/windows_skerls
+    Load the basic structure and instanciate their elements
+    :return: screen loaded
+    '''
     from src.helpers.screen_mapper import load_json_skel, load_elements
     pantalla = load_json_skel(screen_name)
     return load_elements(pantalla, get_back=False)
@@ -113,7 +118,6 @@ def autofill_data_popscreen(data, dict_key, pantalla, commit_btn='aceptar'):
                 pyautogui.moveTo(elemento.x, elemento.y)
                 pyautogui.doubleClick()
                 pyautogui.typewrite(str(v), 0.05)
-
 
     commit = pantalla.get_element_by_name(commit_btn)
     pyautogui.moveTo(commit.x, commit.y)
