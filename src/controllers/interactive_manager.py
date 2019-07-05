@@ -13,7 +13,7 @@ class Interactive_Manager(object):
                     'error_validacion': 'BIZKAIKO FORU ALDUNDIA - DIPUTACIÓN FORAL DE BIZKAIA'
                     }
 
-    not_welcome = ['BFA / DFB']  # splash windows
+    not_welcome = ['BFA / DFB', 'BIZKAIKO FORU ALDUNDIA - DIPUTACIÓN FORAL DE BIZKAIA']  # splash windows
 
     running_gui_app = {}
 
@@ -33,8 +33,8 @@ class Interactive_Manager(object):
             ''' creates dict window_app: handler '''
             self.running_gui_app.update({"{}".format(win32gui.GetWindowText(hwnd)): hwnd})
             print("{} -> {}".format(win32gui.GetWindowText(hwnd), win32gui.GetClassName(hwnd)))
-            #if self.dict_windows['main'] in win32gui.GetWindowText(hwnd):
-            if 'texto a escribir' in win32gui.GetWindowText(hwnd):
+            # if self.dict_windows['main'] in win32gui.GetWindowText(hwnd):
+            if 'new 1 - Notepad++' in win32gui.GetWindowText(hwnd):
                 print("{}- > {}".format(self.dict_windows['main'], hwnd))
                 self.legacy_app = hwnd
 
@@ -104,28 +104,46 @@ class Interactive_Manager(object):
     #         win32api.PostMessage(self.legacy_app, win32con.WM_CHAR, ord(c), 0)
     #         win32api.PostMessage(self.legacy_app, win32con.WM_KEYUP, ord(c), 0)
 
-
+    # def send_input_hax(self, msg):
+    #
+    #     for c in msg:
+    #         win32api.KeyPress(c)
+    #
     def send_input_hax(self, msg):
 
         for c in msg:
-            win32api.KeyPress(c)
+            if c == "\n":
+                win32api.SendMessage(self.legacy_app, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)
+                win32api.SendMessage(self.legacy_app, win32con.WM_KEYUP, win32con.VK_RETURN, 0)
+            else:
+                print("sending to hwnd: {}- > {}".format(self.legacy_app, c))
+                win32api.SendMessage(self.legacy_app, win32con.WM_CHAR, ord(c), 0)
+
+    def send_input_hax2(self, msg):
+        import win32com.client, win32process
+        shell = win32com.client.Dispatch("WScript.Shell")
+        _, pid = win32process.GetWindowThreadProcessId(self.legacy_app)
+        print("pid: {}".format(pid))
 
 
-
-    def SetText(self,  text):
-        textformat = win32con.DT_LEFT | win32con.DT_TOP
-        hDC, paintStruct = win32gui.BeginPaint(self.legacy_app)
-
-        rect = win32gui.GetClientRect(self.legacy_app)
-        win32gui.DrawText(
-            hDC,
-            'Hello send by Python via Win32!',
-            -1,
-            rect,
-            win32con.DT_SINGLELINE | win32con.DT_CENTER | win32con.DT_VCENTER)
-
-        win32gui.EndPaint(self.legacy_app, paintStruct)
-        #win32api.SendMessage(self.legacy_app, win32con.WM_SETTEXT, None, text)
+        #win32gui.SetForegroundWindow(self.legacy_app)
+        #win32gui.SetActiveWindow(self.legacy_app)
+        #win32gui.SetFocus(self.legacy_app)
+        #shell.AppActivate(pid)
+        # shell.SendKeys('{UP}{ENTER}')
+        # win32gui.GetForegroundWindow()
+        for c in msg:
+            if c == "\n":
+                win32api.SendMessage(self.legacy_app, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)
+                win32api.SendMessage(self.legacy_app, win32con.WM_KEYUP, win32con.VK_RETURN, 0)
+            else:
+                # win32gui.SendMessage(self.legacy_app, win32con.CB_SETCURSEL, 0, 0)
+                # time.sleep(1)
+                # win32gui.SendMessage(self.legacy_app, win32con.WM_SETFOCUS, 0, 0)
+                # time.sleep(1)
+                # print("sending to hwnd: {}- > {}".format(self.legacy_app, c))
+                # #shell.SendKeys(c, 0)
+                win32api.PostMessage(self.legacy_app, win32con.WM_CHAR, ord(c), 0)
 
 
 if __name__ == '__main__':
@@ -134,8 +152,8 @@ if __name__ == '__main__':
     wf = Interactive_Manager()
     wf.kill_splash()
     time.sleep(5)
-    print("q voyyy")
-    #wf.move_mouse(500, 500)
-    wf.send_input_hax('texto a escribirtexto a escribirtexto a escribirtexto a escribir')
-    #wf.SetText('texto a escribir')
-    # extract_window_screenshot(dict_windows['main'])
+    # wf.send_input_hax2("dflksf lkdsjfsdkljf sdkljfs kldfjs kldsfjña")
+    # print("q voyyy")
+    # wf.move_mouse(500, 500)
+    # wf.send_input_hax('texto a escribirtexto a escribirtexto a escribirtexto a escribir')
+    # wf.SetText('texto a escribir')

@@ -10,6 +10,7 @@ class Pantalla(object):
     _elements = {}
     _parent = None
     _mapping_file = None
+    _childrens = {}
 
     def __init__(self, **kw):
         self._name = kw.get('_name')
@@ -23,6 +24,14 @@ class Pantalla(object):
 
     def has_element(self, element_name):
         return element_name in self.elements.keys()
+
+    def has_childrens(self):
+        return len(self.childrens.keys())
+
+    def add_children(self, screen):
+        if screen and isinstance(screen, Pantalla):
+            self.childrens.update({screen.name: screen})
+
 
     def get_element_by_name(self, element_name):
         if self.has_element(element_name):
@@ -122,6 +131,16 @@ class Pantalla(object):
     def elements(self, value):
         if value:
             self._elements = value
+
+    @property
+    def childrens(self):
+        return self._childrens
+
+    @elements.setter
+    def childrens(self, value):
+        if value:
+            self._childrens = value
+
 
     @property
     def parent(self):

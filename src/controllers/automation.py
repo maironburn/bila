@@ -56,10 +56,11 @@ def goto_screen(screen, path=None):
     if len(path) > 1:
         ''' estructura pantalla.elemento...'''
         root = path.pop(0)
-        screen = load_fill_screen(root)
+        root_screen = load_fill_screen(root)
         element = path.pop(0)
         move_to_element(screen.get_element_by_name(element))
         screen = load_fill_screen(element)
+        root_screen.add_children(screen)
         return goto_screen(screen, path)
 
     if path:
